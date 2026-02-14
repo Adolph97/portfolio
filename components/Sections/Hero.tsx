@@ -64,14 +64,14 @@ const Hero: React.FC = () => {
     <section 
       ref={containerRef} 
       id="hero" 
-      className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden px-8 md:px-24 pt-20"
+      className="relative min-h-screen md:min-h-[800px] flex items-center justify-center overflow-hidden px-5 md:px-24 pt-24 md:pt-20 pb-16 md:pb-0"
     >
       {/* Humaan Background Animations */}
       <HumaanSVG className="top-[15%] right-[20%]" delay={0} />
       <HumaanSVG className="bottom-[10%] left-[10%]" delay={4} />
       <HumaanSVG className="top-[30%] left-[5%]" delay={7} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 w-full max-w-7xl items-center relative z-20">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-12 w-full max-w-7xl items-center relative z-20">
         {/* Title and Description Column */}
         <motion.div 
           style={{ y: yText, opacity }} 
@@ -87,7 +87,7 @@ const Hero: React.FC = () => {
               <motion.span
                 variants={wordVariants}
                 key={index}
-                className="hero-title font-black text-[var(--text-primary)] mr-4 md:mr-6 mb-1 md:mb-2 inline-block"
+                className="hero-title font-black text-[var(--text-primary)] mr-2.5 md:mr-6 mb-1 md:mb-2 inline-block"
               >
                 {word}
               </motion.span>
@@ -98,14 +98,14 @@ const Hero: React.FC = () => {
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ delay: 1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="w-32 h-1 bg-[var(--accent-color)] my-10 md:my-12 origin-left"
+            className="w-24 md:w-32 h-1 bg-[var(--accent-color)] my-8 md:my-12 origin-left"
           />
 
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4, duration: 1 }}
-            className="text-lg md:text-xl text-[var(--text-secondary)] max-w-lg leading-relaxed font-medium tracking-tight"
+            className="text-base md:text-xl text-[var(--text-secondary)] max-w-lg leading-relaxed font-medium tracking-tight"
           >
             An elite Nigerian tech consultancy architecting autonomous systems, enterprise infrastructure, and scaling global digital economies.
           </motion.p>
@@ -114,22 +114,58 @@ const Hero: React.FC = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.8 }}
-            className="mt-14 flex flex-wrap gap-6"
+            className="mt-10 md:mt-14 flex flex-wrap gap-3 md:gap-6"
           >
             <a 
               href="#work"
               data-cursor="PORTFOLIO"
-              className="px-10 py-5 bg-[var(--accent-color)] text-[var(--bg-color)] font-mono text-[10px] uppercase tracking-[0.5em] font-black rounded-2xl hover:scale-105 transition-all shadow-2xl"
+              className="px-6 md:px-10 py-4 md:py-5 bg-[var(--accent-color)] text-[var(--bg-color)] font-mono text-[10px] uppercase tracking-[0.25em] md:tracking-[0.5em] font-black rounded-2xl hover:scale-105 transition-all shadow-2xl"
             >
               PROJECTS
             </a>
             <a 
               href="#contact"
               data-cursor="INIT_UPLINK"
-              className="px-10 py-5 border border-[var(--glass-border)] text-[var(--text-primary)] font-mono text-[10px] uppercase tracking-[0.5em] font-black rounded-2xl hover:bg-[var(--glass-bg)] transition-all backdrop-blur-sm"
+              className="px-6 md:px-10 py-4 md:py-5 border border-[var(--glass-border)] text-[var(--text-primary)] font-mono text-[10px] uppercase tracking-[0.25em] md:tracking-[0.5em] font-black rounded-2xl hover:bg-[var(--glass-bg)] transition-all backdrop-blur-sm"
             >
               CONTACT_INIT
             </a>
+          </motion.div>
+
+          {/* Mobile Founder Portal */}
+          <motion.div
+            style={{ y: yImage }}
+            initial={{ opacity: 0, y: 30, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 1.6, duration: 1 }}
+            className="mt-12 lg:hidden flex flex-col items-center"
+          >
+            <div className="relative w-full max-w-[320px] aspect-[4/5]">
+              <div className="founder-portal w-full h-full bg-[var(--glass-bg)] border border-[var(--glass-border)] p-1.5 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.65)]">
+                <img
+                  src="/images/hero-image.jpg"
+                  alt="Lead Architect - Obinna Ihekona"
+                  className="w-full h-full object-cover grayscale-[20%] scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-color)]/70 via-transparent to-transparent pointer-events-none" />
+              </div>
+
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
+                className="absolute -inset-6 border border-dashed border-[var(--glass-border)] rounded-full opacity-30 -z-10"
+              />
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
+                className="absolute -inset-12 border border-dashed border-[var(--glass-border)] rounded-full opacity-15 -z-10"
+              />
+            </div>
+
+            <div className="mt-8 text-center">
+              <h4 className="text-xs font-mono uppercase tracking-[0.45em] font-black text-[var(--text-primary)]">Obinna Ihekona</h4>
+              <p className="text-[9px] font-mono uppercase opacity-50 mt-2 tracking-[0.3em]">Lead Systems Architect</p>
+            </div>
           </motion.div>
         </motion.div>
 

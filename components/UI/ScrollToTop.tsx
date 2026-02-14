@@ -38,9 +38,9 @@ const ScrollToTop: React.FC<ScrollToTopProps> = ({ isDarkMode }) => {
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
           onClick={scrollToTop}
           data-cursor="GO_TOP"
-          className="fixed bottom-10 right-10 z-[120] w-16 h-16 liquid-morph rounded-[24px] flex items-center justify-center text-[var(--text-primary)] group hover:bg-[var(--accent-color)] hover:text-[var(--bg-color)] transition-all duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-[var(--glass-border)]"
+          className="fixed bottom-6 right-5 md:bottom-10 md:right-10 z-[120] w-12 h-12 md:w-16 md:h-16 liquid-morph rounded-[18px] md:rounded-[24px] flex items-center justify-center text-[var(--text-primary)] group hover:bg-[var(--accent-color)] hover:text-[var(--bg-color)] transition-all duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-[var(--glass-border)]"
         >
-          <svg className="w-6 h-6 group-hover:-translate-y-1.5 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+          <svg className="w-5 h-5 md:w-6 md:h-6 group-hover:-translate-y-1.5 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
           </svg>
         </motion.button>

@@ -57,17 +57,17 @@ const steps = [
 
 const Process: React.FC = () => {
   return (
-    <section id="process" className="py-40 px-8 md:px-24">
-      <div className="mb-32">
+    <section id="process" className="py-24 md:py-40 px-5 md:px-24">
+      <div className="mb-14 md:mb-32">
         <motion.h2 
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="text-5xl md:text-8xl font-black mb-8 tracking-tighter"
+          className="text-4xl md:text-8xl font-black mb-6 md:mb-8 tracking-tighter"
         >
           The Protocol.
         </motion.h2>
-        <p className="text-[var(--text-color)] opacity-30 text-xs font-mono uppercase tracking-[0.5em]">Standard Operating Procedure [SOP-01]</p>
+        <p className="text-[var(--text-color)] opacity-30 text-[10px] md:text-xs font-mono uppercase tracking-[0.3em] md:tracking-[0.5em]">Standard Operating Procedure [SOP-01]</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-px bg-[var(--glass-border)] rounded-3xl overflow-hidden border border-[var(--glass-border)]">
@@ -78,7 +78,7 @@ const Process: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.12, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-[var(--bg-color)] p-12 flex flex-col gap-12 group hover:bg-[var(--glass-bg)] transition-all duration-700 cursor-default"
+            className="bg-[var(--bg-color)] p-7 md:p-12 flex flex-col gap-7 md:gap-12 group hover:bg-[var(--glass-bg)] transition-all duration-700 cursor-default"
           >
             <div className="flex justify-between items-start">
               <span className="text-[10px] font-mono text-[var(--text-color)] opacity-20 group-hover:opacity-100 transition-opacity">/{s.id}</span>
@@ -88,7 +88,7 @@ const Process: React.FC = () => {
             </div>
             
             <div className="space-y-6">
-              <h3 className="text-2xl font-black uppercase tracking-tight leading-none">{s.title}</h3>
+              <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight leading-none">{s.title}</h3>
               <p className="text-sm opacity-40 leading-relaxed group-hover:opacity-80 transition-opacity">{s.desc}</p>
             </div>
             

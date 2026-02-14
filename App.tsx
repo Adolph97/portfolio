@@ -78,14 +78,14 @@ const App: React.FC = () => {
         <Contact />
       </main>
 
-      <footer className="relative z-10 py-16 px-8 md:px-24 border-t border-[var(--glass-border)] bg-[var(--bg-color)] bg-opacity-80 backdrop-blur-md flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-mono uppercase tracking-widest text-[var(--text-color)] transition-colors duration-500">
+      <footer className="relative z-10 py-12 md:py-16 px-5 md:px-24 border-t border-[var(--glass-border)] bg-[var(--bg-color)] bg-opacity-80 backdrop-blur-md flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8 text-[9px] md:text-[10px] font-mono uppercase tracking-[0.2em] md:tracking-widest text-[var(--text-color)] transition-colors duration-500">
         <div className="flex flex-col gap-3">
           <div className="font-bold tracking-[0.2em]">Kona Tech Limited</div>
           <div className="opacity-40">Architecting Global Intelligence.</div>
         </div>
         <div className="text-center opacity-40">Built in Lagos, NG. Distributed Worldwide.</div>
         <div className="flex items-center gap-8">
-          <div className="flex items-center gap-4 border border-[var(--glass-border)] px-4 py-2 rounded-full">
+          <div className="flex items-center gap-3 md:gap-4 border border-[var(--glass-border)] px-3 md:px-4 py-2 rounded-full">
             <span className="opacity-30">ENERGY</span>
             <div className="flex gap-2">
               <button onClick={() => setThemeIntensity(prev => Math.min(1, prev + 0.1))} className="hover:text-[var(--accent-color)] transition-colors">++</button>

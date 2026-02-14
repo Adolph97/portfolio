@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface NavigationProps {
@@ -8,6 +8,7 @@ interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = ({ toggleTheme, isDarkMode }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navItems = [
     { label: 'Work', href: '#work' },
     { label: 'Services', href: '#services' },
@@ -21,10 +22,11 @@ const Navigation: React.FC<NavigationProps> = ({ toggleTheme, isDarkMode }) => {
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
     }
+    setIsMenuOpen(false);
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-[1000] p-6 md:p-8 flex justify-between items-center pointer-events-none">
+    <nav className="fixed top-0 left-0 w-full z-[1000] px-4 py-4 md:p-8 flex justify-between items-center pointer-events-none">
       <div className="pointer-events-auto">
         <a href="#hero" onClick={(e) => handleNavClick(e, '#hero')} className="flex items-center gap-3 group">
           <div className="w-9 h-9 md:w-10 md:h-10 bg-[var(--accent-color)] flex items-center justify-center overflow-hidden transition-all duration-500 rounded-lg group-hover:rounded-2xl shadow-xl">
@@ -52,17 +54,31 @@ const Navigation: React.FC<NavigationProps> = ({ toggleTheme, isDarkMode }) => {
         <button 
           onClick={toggleTheme}
           data-cursor={isDarkMode ? "SWITCH_LIGHT" : "SWITCH_DARK"}
-          className="relative w-10 lg:w-12 h-5 lg:h-6 rounded-full bg-[var(--glass-border)] flex items-center px-1 transition-all group overflow-hidden border border-[var(--glass-border)]"
+          className="relative w-10 h-5 rounded-full bg-[var(--glass-border)] flex items-center px-1 transition-all group overflow-hidden border border-[var(--glass-border)]"
         >
           <motion.div
-            animate={{ x: isDarkMode ? (window.innerWidth < 1024 ? 20 : 24) : 0 }}
+            animate={{ x: isDarkMode ? 20 : 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="w-3.5 h-3.5 lg:w-4 lg:h-4 rounded-full bg-[var(--accent-color)] shadow-lg"
+            className="w-3.5 h-3.5 rounded-full bg-[var(--accent-color)] shadow-lg"
           />
         </button>
       </div>
 
       <div className="md:hidden pointer-events-auto flex items-center gap-4">
+        <button
+          onClick={() => setIsMenuOpen((prev) => !prev)}
+          aria-expanded={isMenuOpen}
+          aria-label="Toggle navigation menu"
+          className="h-9 w-9 flex items-center justify-center border border-[var(--glass-border)] rounded-xl text-[var(--text-primary)] bg-[var(--nav-bg)] backdrop-blur-md shadow-lg"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+            {isMenuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 12h16M4 17h16" />
+            )}
+          </svg>
+        </button>
         <button 
           onClick={toggleTheme} 
           className="text-[9px] font-mono font-bold border border-[var(--glass-border)] px-3 py-1.5 rounded-full text-[var(--text-primary)] bg-[var(--nav-bg)] backdrop-blur-md shadow-lg"
@@ -70,6 +86,23 @@ const Navigation: React.FC<NavigationProps> = ({ toggleTheme, isDarkMode }) => {
           {isDarkMode ? "DARK" : "LIGHT"}
         </button>
       </div>
+
+      {isMenuOpen && (
+        <div className="md:hidden pointer-events-auto absolute left-4 right-4 top-16 liquid-morph rounded-2xl p-4 border border-[var(--glass-border)] shadow-2xl bg-[var(--nav-bg)]">
+          <div className="flex flex-col gap-1">
+            {navItems.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
+                className="px-3 py-3 text-[10px] uppercase tracking-[0.35em] font-bold text-[var(--text-primary)] opacity-70 hover:opacity-100 transition-all rounded-xl hover:bg-[var(--glass-bg)]"
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

@@ -5,12 +5,22 @@ import { motion, useSpring } from 'framer-motion';
 const CustomCursor: React.FC = () => {
   const [isHovering, setIsHovering] = useState(false);
   const [cursorText, setCursorText] = useState('');
+  const [isFinePointer, setIsFinePointer] = useState(true);
   
   const springConfig = { damping: 25, stiffness: 200 };
   const mouseX = useSpring(0, springConfig);
   const mouseY = useSpring(0, springConfig);
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+    setIsFinePointer(mediaQuery.matches);
+
+    const handlePointerChange = (event: MediaQueryListEvent) => {
+      setIsFinePointer(event.matches);
+    };
+
+    mediaQuery.addEventListener('change', handlePointerChange);
+
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
@@ -30,10 +40,15 @@ const CustomCursor: React.FC = () => {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseover', handleMouseOver);
     return () => {
+      mediaQuery.removeEventListener('change', handlePointerChange);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseover', handleMouseOver);
     };
   }, [mouseX, mouseY]);
+
+  if (!isFinePointer) {
+    return null;
+  }
 
   return (
     <>

@@ -44,8 +44,8 @@ const services = [
 
 const Services: React.FC = () => {
   return (
-    <section id="services" className="py-32 px-8 md:px-24">
-      <div className="flex flex-col md:flex-row gap-12 items-baseline mb-32">
+    <section id="services" className="py-20 md:py-32 px-5 md:px-24">
+      <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-baseline mb-12 md:mb-32">
         <motion.h2 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -54,7 +54,7 @@ const Services: React.FC = () => {
         >
           Intelligence<br/>Modules.
         </motion.h2>
-        <div className="text-[var(--text-color)] opacity-20 font-mono text-[10px] uppercase tracking-[0.6em]">System Capabilities [v4.2]</div>
+        <div className="text-[var(--text-color)] opacity-20 font-mono text-[9px] md:text-[10px] uppercase tracking-[0.3em] md:tracking-[0.6em]">System Capabilities [v4.2]</div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[var(--glass-border)] border border-[var(--glass-border)] rounded-3xl overflow-hidden shadow-2xl">
@@ -65,13 +65,13 @@ const Services: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className="bg-[var(--bg-color)] p-12 flex flex-col gap-12 group hover:bg-[var(--glass-bg)] transition-all duration-500"
+            className="bg-[var(--bg-color)] p-7 md:p-12 flex flex-col gap-8 md:gap-12 group hover:bg-[var(--glass-bg)] transition-all duration-500"
           >
             <div className="text-[var(--text-color)] opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500">
               {s.icon}
             </div>
             <div>
-              <h3 className="text-xl font-bold mb-6 tracking-tight">{s.title}</h3>
+              <h3 className="text-lg md:text-xl font-bold mb-4 md:mb-6 tracking-tight">{s.title}</h3>
               <p className="text-sm text-[var(--text-color)] opacity-40 leading-relaxed group-hover:opacity-80 transition-opacity">
                 {s.desc}
               </p>
