@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kona Tech Limited | Intelligent Systems Engineering</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg-color: #050505;
+        --text-primary: #ffffff;
+        --text-secondary: rgba(255, 255, 255, 0.6);
+        --accent-color: #ffffff;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.12);
+        --dot-color: rgba(255, 255, 255, 0.1);
+        --nav-bg: rgba(5, 5, 5, 0.7);
+        --input-bg: rgba(255, 255, 255, 0.03);
+      }
+      
+      html.light {
+        --bg-color: #f5f5f7;
+        --text-primary: #000000;
+        --text-secondary: rgba(0, 0, 0, 0.6);
+        --accent-color: #000000;
+        --glass-bg: rgba(0, 0, 0, 0.03);
+        --glass-border: rgba(0, 0, 0, 0.15);
+        --dot-color: rgba(0, 0, 0, 0.08);
+        --nav-bg: rgba(245, 245, 247, 0.75);
+        --input-bg: rgba(0, 0, 0, 0.02);
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 100px;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-primary);
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+        transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s ease;
+      }
+
+      section {
+        position: relative;
+        z-index: 10;
+      }
+
+      .font-mono {
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      .liquid-morph {
+        backdrop-filter: blur(24px) saturate(180%);
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        * {
+          cursor: none !important;
+        }
+      }
+
+      ::selection {
+        background: var(--accent-color);
+        color: var(--bg-color);
+      }
+
+      .bg-dots {
+        background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+        background-size: 60px 60px;
+      }
+
+      /* Fixed Hero Scaling */
+      .hero-title {
+        font-size: clamp(2rem, 6.5vw, 6.8rem);
+        line-height: 0.95;
+        letter-spacing: -0.05em;
+      }
+
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: clamp(1.7rem, 11vw, 2.9rem);
+          letter-spacing: -0.03em;
+        }
+      }
+
+      /* Humaan Animation Styles */
+      @keyframes float-humaan {
+        0%, 100% { transform: translateY(0) rotate(0); }
+        50% { transform: translateY(-30px) rotate(4deg); }
+      }
+
+      .humaan-float {
+        animation: float-humaan 10s ease-in-out infinite;
+      }
+
+      /* Unique Portal Mask for Founder */
+      .founder-portal {
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        animation: portal-morph 15s ease-in-out infinite;
+        overflow: hidden;
+        box-shadow: 0 40px 100px -20px rgba(0,0,0,0.5);
+      }
+
+      @keyframes portal-morph {
+        0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+      }
+
+      .badge-live {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #4ade80;
+      }
+
+      .badge-soon {
+        background: rgba(234, 179, 8, 0.1);
+        border: 1px solid rgba(234, 179, 8, 0.3);
+        color: #facc15;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-color);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--glass-border);
+        border-radius: 10px;
+      }
+    </style>
+
+  <link rel="stylesheet" href="/index.css">
+    <script type="importmap">
+    {
+      "imports": {
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+        "@react-three/fiber": "https://esm.sh/@react-three/fiber@^9.5.0",
+        "@react-three/drei": "https://esm.sh/@react-three/drei@^10.7.7",
+        "three": "https://esm.sh/three@^0.182.0",
+        "react": "https://esm.sh/react@^19.2.4",
+        "framer-motion": "https://esm.sh/framer-motion@^12.33.0",
+        "react/": "https://esm.sh/react@^19.2.4/"
+      }
+    }
+    </script>
+  <script type="module" crossorigin src="/assets/index-eimbmn2J.js"></script>
+</head>
+  <body class="bg-dots">
+    <div id="root"></div>
+</body>
+</html>
