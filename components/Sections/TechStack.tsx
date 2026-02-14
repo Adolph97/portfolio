@@ -11,11 +11,12 @@ const stack = [
   { name: "PostgreSQL", type: "Persistence" },
   { name: "Telegram API", type: "Comms" },
   { name: "Vercel", type: "Infra" },
+  { name: "Automation", type: "AI" }
 ];
 
 const TechStack: React.FC = () => {
   return (
-    <section id="stack" className="py-20 md:py-24 px-5 md:px-24">
+    <section id="stack" className="pt-16 pb-0 px-5 md:px-24">
       <div className="max-w-4xl mx-auto text-center mb-12 md:mb-24">
         <h2 className="text-4xl font-black mb-4 tracking-tighter text-[var(--text-primary)]">Core Stack.</h2>
         <p className="text-[var(--text-secondary)] text-sm font-mono uppercase tracking-[0.4em]">Integrated Intelligence</p>
@@ -36,9 +37,9 @@ const TechStack: React.FC = () => {
         ))}
       </div>
 
-      <div className="mt-12 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--glass-border)] border border-[var(--glass-border)] opacity-30 rounded-3xl overflow-hidden">
+      <div className="mt-8 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--glass-border)] border border-[var(--glass-border)] opacity-30 rounded-3xl overflow-hidden">
         {[...Array(8)].map((_, i) => (
-          <div key={i} className="aspect-square bg-[var(--bg-color)] flex items-center justify-center">
+          <div key={i} className="h-12 md:h-16 bg-[var(--bg-color)] flex items-center justify-center">
             <div className="w-1 h-1 bg-[var(--text-secondary)]" />
           </div>
         ))}
