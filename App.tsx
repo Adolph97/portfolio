@@ -9,6 +9,7 @@ import Services from './components/Sections/Services';
 import Portfolio from './components/Sections/Portfolio';
 import Process from './components/Sections/Process';
 import TechStack from './components/Sections/TechStack';
+import Testimonials from './components/Sections/Testimonials';
 import Contact from './components/Sections/Contact';
 import SystemStatus from './components/UI/SystemStatus';
 import ScrollToTop from './components/UI/ScrollToTop';
@@ -75,6 +76,7 @@ const App: React.FC = () => {
         <Portfolio />
         <Process />
         <TechStack />
+        <Testimonials />
         <Contact />
       </main>
 

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const Contact: React.FC = () => {
   return (
-    <section id="contact" className="py-24 md:py-40 px-5 md:px-24 bg-[var(--bg-color)] transition-colors duration-500">
+    <section id="contact" className="py-16 md:py-24 px-5 md:px-24 bg-[var(--bg-color)] transition-colors duration-500">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-24 items-center">
         <div className="space-y-10 md:space-y-12 relative">
           <motion.div
