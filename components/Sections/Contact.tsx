@@ -1,8 +1,50 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 const Contact: React.FC = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('sending');
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setStatus('error');
+        setErrorMessage(data.error || 'Failed to send message');
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      setStatus('error');
+      setErrorMessage('Network error. Please try again later.');
+    }
+  };
+
   return (
     <section id="contact" className="py-16 md:py-24 px-5 md:px-24 bg-[var(--bg-color)] transition-colors duration-500">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-24 items-center">
@@ -56,11 +98,15 @@ const Contact: React.FC = () => {
         >
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-[var(--accent-color)] to-transparent opacity-10" />
           
-          <form className="space-y-8 md:space-y-12">
+          <form onSubmit={handleSubmit} className="space-y-8 md:space-y-12">
             <div className="relative group">
               <label className="text-[9px] md:text-[10px] font-mono uppercase tracking-[0.2em] md:tracking-[0.4em] text-[var(--text-secondary)] block mb-3 font-bold">Subject_ID / Name</label>
               <input 
                 type="text" 
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
                 placeholder="Ex. Chief Technology Officer"
                 className="w-full bg-[var(--input-bg)] border border-[var(--glass-border)] rounded-2xl px-5 md:px-6 py-4 md:py-5 outline-none focus:border-[var(--accent-color)] transition-all font-bold placeholder:opacity-30 text-[var(--text-primary)] shadow-sm"
               />
@@ -70,6 +116,10 @@ const Contact: React.FC = () => {
               <label className="text-[9px] md:text-[10px] font-mono uppercase tracking-[0.2em] md:tracking-[0.4em] text-[var(--text-secondary)] block mb-3 font-bold">Comms_Route / Email</label>
               <input 
                 type="email" 
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
                 placeholder="connection@domain.com"
                 className="w-full bg-[var(--input-bg)] border border-[var(--glass-border)] rounded-2xl px-5 md:px-6 py-4 md:py-5 outline-none focus:border-[var(--accent-color)] transition-all font-bold placeholder:opacity-30 text-[var(--text-primary)] shadow-sm"
               />
@@ -79,17 +129,42 @@ const Contact: React.FC = () => {
               <label className="text-[9px] md:text-[10px] font-mono uppercase tracking-[0.2em] md:tracking-[0.4em] text-[var(--text-secondary)] block mb-3 font-bold">Mission_Parameters</label>
               <textarea 
                 rows={4}
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                required
                 placeholder="Describe your architectural requirements..."
                 className="w-full bg-[var(--input-bg)] border border-[var(--glass-border)] rounded-2xl px-5 md:px-6 py-4 md:py-5 outline-none focus:border-[var(--accent-color)] transition-all font-bold resize-none placeholder:opacity-30 text-[var(--text-primary)] shadow-sm"
               />
             </div>
 
             <button 
-              type="button"
-              className="w-full py-5 md:py-7 bg-[var(--accent-color)] text-[var(--bg-color)] font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] md:tracking-[0.6em] font-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 md:gap-4 rounded-[24px] shadow-2xl"
+              type="submit"
+              disabled={status === 'sending'}
+              className="w-full py-5 md:py-7 bg-[var(--accent-color)] text-[var(--bg-color)] font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] md:tracking-[0.6em] font-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 md:gap-4 rounded-[24px] shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Broadcast_Transmission
+              {status === 'sending' ? 'Transmitting...' : 'Broadcast_Transmission'}
             </button>
+
+            {status === 'success' && (
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-green-500 font-mono text-xs text-center"
+              >
+                Transmission received successfully. Uplink established.
+              </motion.p>
+            )}
+
+            {status === 'error' && (
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-red-500 font-mono text-xs text-center"
+              >
+                {errorMessage}
+              </motion.p>
+            )}
           </form>
 
           <div className="mt-12 flex justify-between items-center opacity-30 font-mono text-[9px] uppercase tracking-[0.3em]">
