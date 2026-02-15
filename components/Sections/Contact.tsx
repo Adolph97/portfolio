@@ -29,19 +29,27 @@ const Contact: React.FC = () => {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      // Check if response is actually JSON before parsing
+      const contentType = response.headers.get("content-type");
+      let data;
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      }
 
       if (response.ok) {
         setStatus('success');
         setFormData({ name: '', email: '', message: '' });
       } else {
         setStatus('error');
-        setErrorMessage(data.error || 'Failed to send message');
+        // Use backend details when available for faster SMTP debugging.
+        const composedMessage = data?.details ? `${data?.error || 'Request failed'} (${data.details})` : (data?.error || `Error ${response.status}: ${response.statusText}`);
+        setErrorMessage(composedMessage);
+        console.error('Server Error:', data || response.statusText);
       }
     } catch (error) {
       console.error('Submission error:', error);
       setStatus('error');
-      setErrorMessage('Network error. Please try again later.');
+      setErrorMessage(error instanceof Error ? error.message : 'Network error. Please try again later.');
     }
   };
 
