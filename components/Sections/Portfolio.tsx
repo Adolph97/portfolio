@@ -21,7 +21,7 @@ const projects = [
     category: "CONSUMER PLATFORM",
     image: "/Logos/heart.png",
     status: "live",
-    url: ""
+    url: "https://bit.ly/lovequiz26"
   },
   {
     title: "Clock-It",
