@@ -1,15 +1,14 @@
 
 import React, { useEffect, useState } from 'react';
-import { motion, useSpring } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 
 const CustomCursor: React.FC = () => {
   const [isHovering, setIsHovering] = useState(false);
   const [cursorText, setCursorText] = useState('');
   const [isFinePointer, setIsFinePointer] = useState(true);
   
-  const springConfig = { damping: 25, stiffness: 200 };
-  const mouseX = useSpring(0, springConfig);
-  const mouseY = useSpring(0, springConfig);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');

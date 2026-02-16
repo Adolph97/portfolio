@@ -1,8 +1,7 @@
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CustomCursor from './components/CustomCursor';
-import ThreeScene from './components/ThreeScene';
 import Navigation from './components/Navigation';
 import Hero from './components/Sections/Hero';
 import Services from './components/Sections/Services';
@@ -10,6 +9,7 @@ import Portfolio from './components/Sections/Portfolio';
 import Process from './components/Sections/Process';
 import TechStack from './components/Sections/TechStack';
 import Testimonials from './components/Sections/Testimonials';
+import GlobalPresence from './components/Sections/GlobalPresence';
 import Contact from './components/Sections/Contact';
 import SystemStatus from './components/UI/SystemStatus';
 import ScrollToTop from './components/UI/ScrollToTop';
@@ -17,7 +17,6 @@ import SocialLinks from './components/UI/SocialLinks';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [themeIntensity, setThemeIntensity] = useState(0.4);
   const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
@@ -64,12 +63,6 @@ const App: React.FC = () => {
       </AnimatePresence>
 
       <Navigation toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-      
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <Suspense fallback={null}>
-          <ThreeScene intensity={themeIntensity} isDarkMode={isDarkMode} />
-        </Suspense>
-      </div>
 
       <main className="relative z-10 w-full">
         <Hero />
@@ -78,6 +71,7 @@ const App: React.FC = () => {
         <Process />
         <TechStack />
         <Testimonials />
+        <GlobalPresence isDarkMode={isDarkMode} />
         <Contact />
       </main>
 
@@ -89,13 +83,6 @@ const App: React.FC = () => {
         <div className="text-center opacity-40">Built in Lagos, NG. Distributed Worldwide.</div>
         <div className="flex items-center gap-8">
           <SocialLinks className="hidden md:flex" />
-          <div className="flex items-center gap-3 md:gap-4 border border-[var(--glass-border)] px-3 md:px-4 py-2 rounded-full">
-            <span className="opacity-30">ENERGY</span>
-            <div className="flex gap-2">
-              <button onClick={() => setThemeIntensity(prev => Math.min(1, prev + 0.1))} className="hover:text-[var(--accent-color)] transition-colors">++</button>
-              <button onClick={() => setThemeIntensity(prev => Math.max(0, prev - 0.1))} className="hover:text-[var(--accent-color)] transition-colors">--</button>
-            </div>
-          </div>
         </div>
       </footer>
     </div>
