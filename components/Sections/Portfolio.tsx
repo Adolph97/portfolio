@@ -12,7 +12,7 @@ const projects = [
     category: "AI/ML SYSTEM",
     image: "/Logos/customerpro.jpeg",
     status: "live",
-    url: ""
+    url: "https://customerpro-one.vercel.app"
   },
   {
     title: "Loveet",
@@ -31,6 +31,15 @@ const projects = [
     image: "/Logos/clock-it.png",
     status: "live",
     url: "https://clock-it.org"
+  },
+  {
+    title: "Top Minds",
+    tagline: "Preparing you for Excellence",
+    desc: "AI-powered interview preparation platform with real-time feedback and personalized coaching for top-tier tech roles.",
+    category: "EDTECH SOLUTION",
+    image: "/Logos/signalpro.jpeg",
+    status: "soon",
+    url: ""
   },
   {
     title: "Signal pro Bot",
