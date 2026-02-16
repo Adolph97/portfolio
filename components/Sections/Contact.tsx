@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import SocialLinks from '../UI/SocialLinks';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -73,7 +74,10 @@ const Contact: React.FC = () => {
           <div className="space-y-8 md:space-y-10">
              <div className="space-y-3">
                <div className="text-[10px] font-mono text-[var(--text-secondary)] uppercase tracking-[0.5em] opacity-50">Direct Connection</div>
-               <a href="mailto:hello@konatech.limited" className="text-xl md:text-3xl font-black hover:opacity-50 transition-opacity text-[var(--text-primary)] tracking-tight break-all">hello@konatech.limited</a>
+               <a href="mailto:hello@konatechlimited.org" className="text-xl md:text-3xl font-black hover:opacity-50 transition-opacity text-[var(--text-primary)] tracking-tight break-all">hello@konatechlimited.org</a>
+               <div className="pt-4">
+                 <SocialLinks />
+               </div>
              </div>
 
              <div className="space-y-6">

@@ -13,6 +13,7 @@ import Testimonials from './components/Sections/Testimonials';
 import Contact from './components/Sections/Contact';
 import SystemStatus from './components/UI/SystemStatus';
 import ScrollToTop from './components/UI/ScrollToTop';
+import SocialLinks from './components/UI/SocialLinks';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -87,6 +88,7 @@ const App: React.FC = () => {
         </div>
         <div className="text-center opacity-40">Built in Lagos, NG. Distributed Worldwide.</div>
         <div className="flex items-center gap-8">
+          <SocialLinks className="hidden md:flex" />
           <div className="flex items-center gap-3 md:gap-4 border border-[var(--glass-border)] px-3 md:px-4 py-2 rounded-full">
             <span className="opacity-30">ENERGY</span>
             <div className="flex gap-2">
