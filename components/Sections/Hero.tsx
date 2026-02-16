@@ -59,7 +59,6 @@ const Hero: React.FC = () => {
       y: 60,
     },
   };
-
   return (
     <section 
       ref={containerRef} 
