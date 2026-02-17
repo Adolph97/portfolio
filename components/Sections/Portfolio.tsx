@@ -39,7 +39,7 @@ const projects = [
     category: "EDTECH SOLUTION",
     image: "/Logos/signalpro.jpeg",
     status: "soon",
-    url: ""
+    url: "https://topmind.vercel.app"
   },
   {
     title: "Signal pro Bot",
