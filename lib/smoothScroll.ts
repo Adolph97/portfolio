@@ -19,12 +19,15 @@ export const startSmoothScroll = () => {
   };
 };
 
-/** Scrolls to a position or element, eased when smooth scrolling is running. */
-export const scrollTo = (target: number | string | HTMLElement) => {
+/** Scrolls to a position or element, eased when smooth scrolling is running. Pass `center` to land an element mid-viewport. */
+export const scrollTo = (target: number | string | HTMLElement, { center = false } = {}) => {
+  const el = typeof target === 'string' ? document.querySelector<HTMLElement>(target) : typeof target === 'number' ? null : target;
+  const offset = el && center ? -(window.innerHeight - el.offsetHeight) / 2 : el ? -72 : 0;
+
   if (lenis) {
-    lenis.scrollTo(target, { offset: typeof target === 'number' ? 0 : -72 });
+    lenis.scrollTo(el ?? (target as number), { offset });
     return;
   }
-  if (typeof target === 'number') window.scrollTo({ top: target, behavior: 'smooth' });
-  else (typeof target === 'string' ? document.querySelector(target) : target)?.scrollIntoView({ behavior: 'smooth' });
+  const top = el ? el.getBoundingClientRect().top + window.scrollY + offset : (target as number);
+  window.scrollTo({ top, behavior: 'smooth' });
 };

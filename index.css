@@ -544,111 +544,141 @@ html.dark .logo-cell:hover .logo-img[data-tone='light'] {
 }
 
 /* ------------------------------------------------------------------
-   Process timeline
+   Process: steps scroll past a pinned, animated scene
 ------------------------------------------------------------------- */
-.steps {
+.process-layout {
+  display: grid;
+  gap: 8px;
+}
+
+.process-stage {
+  position: sticky;
+  top: 12px;
+  z-index: 2;
+  padding-bottom: 12px;
+  background: var(--paper);
+  /* Cover the sliver above the pinned panel so scrolling text doesn't peek through */
+  box-shadow: 0 -12px 0 var(--paper);
+}
+
+.process-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  height: min(40vh, 320px);
+  margin-inline: auto;
+}
+
+.process-panel svg {
+  display: block;
+  margin-inline: auto;
+}
+
+.process-meter {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 18px;
+  display: flex;
+  gap: 6px;
+}
+
+.process-meter span {
+  flex: 1;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(226, 236, 248, 0.2);
+  overflow: hidden;
+}
+
+.process-meter i {
+  display: block;
+  height: 100%;
+  background: #e8b33a;
+  transform-origin: left center;
+}
+
+.process-caption {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  margin: 0;
+  font-weight: 700;
+  color: var(--on-indigo);
+}
+
+.process-steps {
   list-style: none;
   margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 32px;
-  counter-reset: step;
+  padding: 0 0 12vh;
 }
 
-@media (min-width: 900px) {
-  .steps {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 28px;
-  }
-}
-
-.step {
-  position: relative;
-  padding-left: 60px;
-}
-
-@media (min-width: 900px) {
-  .step {
-    padding-left: 0;
-    padding-top: 68px;
-  }
-}
-
-.step-num {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
+.process-step {
+  min-height: 46vh;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.9375rem;
-  background: var(--paper);
-  border: 1.5px solid var(--ink);
-  color: var(--ink);
-  z-index: 2;
+  padding: 24px 0 24px 24px;
+  border-left: 2px solid var(--line);
+  opacity: 0.38;
+  transition: opacity 0.5s ease, border-color 0.5s ease;
 }
 
-/* Connecting thread between steps */
-.step:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  left: 19px;
-  top: 40px;
-  bottom: -32px;
-  width: 1.5px;
-  background: var(--line);
+.process-step[data-active='true'] {
+  opacity: 1;
+  border-left-color: var(--indigo);
 }
 
-@media (min-width: 900px) {
-  .step:not(:last-child)::after {
-    left: 40px;
-    right: -28px;
-    top: 19px;
-    bottom: auto;
-    width: auto;
-    height: 1.5px;
+.process-step-btn {
+  display: grid;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.process-step-kicker {
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+
+.process-step-title {
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-weight: 800;
+}
+
+@media (min-width: 960px) {
+  .process-layout {
+    grid-template-columns: 5fr 6fr;
+    gap: 72px;
+    align-items: start;
   }
-}
-
-/* Scroll-driven fill over each connector */
-.step-fill {
-  position: absolute;
-  left: 19px;
-  top: 40px;
-  bottom: -32px;
-  width: 1.5px;
-  background: var(--indigo);
-  transform-origin: top center;
-  transform: scaleY(var(--p, 0));
-  z-index: 1;
-}
-
-@media (min-width: 900px) {
-  .step-fill {
-    left: 40px;
-    right: -28px;
-    top: 19px;
-    bottom: auto;
-    width: auto;
-    height: 1.5px;
-    transform-origin: left center;
-    transform: scaleX(var(--p, 0));
+  .process-stage {
+    order: 2;
+    top: 96px;
+    padding-bottom: 0;
+    background: none;
+    box-shadow: none;
   }
-}
-
-.step-num {
-  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.step[data-reached='true'] .step-num {
-  background: var(--indigo);
-  border-color: var(--indigo);
-  color: var(--paper);
-  transform: scale(1.08);
+  .process-panel {
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-height: calc(100vh - 150px);
+    border-radius: 28px;
+  }
+  .process-step {
+    min-height: 62vh;
+    padding-left: 32px;
+  }
+  .process-steps {
+    padding-bottom: 18vh;
+  }
 }
 
 /* ------------------------------------------------------------------
