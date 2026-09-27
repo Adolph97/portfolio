@@ -1,5 +1,5 @@
-import React, { Suspense, lazy, useCallback, useRef, useState } from 'react';
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import React, { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
+import { animate, motion, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 import AdirePattern from '../UI/AdirePattern';
 import type { PointerState } from '../UI/AdireCloth';
 
@@ -9,6 +9,25 @@ const AdireCloth = lazy(() => import('../UI/AdireCloth'));
 const ease = [0.16, 1, 0.3, 1] as const;
 
 const words = 'We build the software growing businesses run on.'.split(' ');
+
+const highlights = [
+  { value: 6, label: 'client companies' },
+  { value: 4, label: 'products live' },
+  { value: 6, label: 'countries reached' },
+];
+
+/** Counts up from zero the first time it comes into view. */
+const CountUp: React.FC<{ to: number; delay?: number }> = ({ to, delay = 0 }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!inView) return;
+    const controls = animate(0, to, { duration: 1.4, delay, ease: [0.16, 1, 0.3, 1], onUpdate: (v) => setN(Math.round(v)) });
+    return () => controls.stop();
+  }, [inView, to, delay]);
+  return <span ref={ref}>{n}</span>;
+};
 
 const Hero: React.FC = () => {
   const reduceMotion = useReducedMotion();
@@ -96,16 +115,24 @@ const Hero: React.FC = () => {
               </a>
             </motion.div>
 
-            <motion.a
-              href="#clients"
-              className="scroll-cue"
+            <motion.dl
+              className="hero-highlights"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.6 }}
+              transition={{ duration: 1, delay: 1.35 }}
             >
-              <span className="scroll-cue-line" aria-hidden="true" />
-              Scroll to explore
-            </motion.a>
+              {highlights.map((h, i) => (
+                <div key={h.label}>
+                  <dt className="sr-only">{h.label}</dt>
+                  <dd className="m-0">
+                    <span className="hero-highlight-value">
+                      <CountUp to={h.value} delay={1.4 + i * 0.12} />
+                    </span>
+                    <span className="hero-highlight-label">{h.label}</span>
+                  </dd>
+                </div>
+              ))}
+            </motion.dl>
           </div>
         </motion.div>
 
@@ -141,6 +168,27 @@ const Hero: React.FC = () => {
                 transition={{ duration: 1.6, delay: 0.7, ease }}
               />
             </motion.div>
+
+            {/* Founder badge: links down to the 10xdev section */}
+            <motion.a
+              href="#community"
+              className="hero-badge"
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.8, delay: 1.9, ease }}
+            >
+              <motion.span
+                className="flex items-center gap-3"
+                animate={reduceMotion ? undefined : { y: [0, -4, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2.8 }}
+              >
+                <img src="/Logos/10xdev-logo.png" alt="" className="hero-badge-logo" />
+                <span className="leading-tight">
+                  <span className="block text-[0.8125rem] text-[#687487]">Founder of</span>
+                  <span className="block font-bold text-[#111b29]">10xdev</span>
+                </span>
+              </motion.span>
+            </motion.a>
           </motion.div>
           <motion.figcaption
             className="mt-4 flex items-baseline justify-between gap-4"
