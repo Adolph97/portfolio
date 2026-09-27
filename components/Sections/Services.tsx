@@ -53,21 +53,25 @@ const services = [
     motif: 'rings' as Motif,
     title: 'AI and automation',
     desc: 'Assistants, classifiers and data pipelines that take repetitive work off your team, built around how you already operate.',
+    examples: 'Reading invoices, scoring leads, answering routine questions, forecasting stock.',
   },
   {
     motif: 'dots' as Motif,
     title: 'Internal tools',
     desc: 'Dashboards, attendance, payroll and approval systems that connect to the software you already pay for.',
+    examples: 'Staff check-in, expense approvals, sales dashboards, inventory tracking.',
   },
   {
     motif: 'stripes' as Motif,
     title: 'Product engineering',
     desc: 'Web and mobile products, from a first clickable prototype to a platform that holds up under real traffic.',
+    examples: 'Customer portals, marketplaces, booking apps, internal platforms.',
   },
   {
     motif: 'zigzag' as Motif,
     title: 'Chatbots and messaging',
     desc: 'WhatsApp and Telegram bots for customer support, sales follow-ups and notifications.',
+    examples: 'Order updates, support triage, appointment reminders, payment alerts.',
   },
 ];
 
@@ -86,10 +90,16 @@ const Services: React.FC = () => (
 
       <div className="service-grid">
         {services.map((s) => (
-          <div key={s.title} className="service">
+          <div key={s.title} className="service" data-motif={s.motif} tabIndex={0}>
             <MotifGlyph motif={s.motif} />
             <h3 className="t-h3 mt-6">{s.title}</h3>
             <p className="t-body mt-3">{s.desc}</p>
+            <div className="service-examples">
+              <p className="t-small">
+                <span className="font-semibold text-[var(--indigo)]">For example: </span>
+                {s.examples}
+              </p>
+            </div>
           </div>
         ))}
       </div>

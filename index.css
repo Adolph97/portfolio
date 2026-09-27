@@ -743,11 +743,148 @@ html.dark .work-hover {
   display: block;
   color: var(--indigo);
   overflow: visible;
+  transition: color 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.service-glyph circle {
+.service-glyph > * {
   transform-box: fill-box;
   transform-origin: center;
+}
+
+.service-glyph rect {
+  transition: fill 0.4s ease, stroke-opacity 0.4s ease;
+}
+
+/* Hover (or keyboard focus) brings a service forward: a wash rises, the motif fills and comes alive */
+.service {
+  position: relative;
+  isolation: isolate;
+  outline: none;
+}
+
+.service::before {
+  content: '';
+  position: absolute;
+  inset: 0 -20px;
+  z-index: -1;
+  border-radius: 24px;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--indigo) 7%, transparent));
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 768px) {
+  /* Keep each wash inside its own cell, clear of the centre divider */
+  .service:nth-child(odd)::before {
+    right: 20px;
+  }
+  .service:nth-child(even)::before {
+    left: 20px;
+  }
+}
+
+.service h3 {
+  transition: color 0.3s ease;
+}
+
+.service-examples {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+}
+
+.service-examples > p {
+  overflow: hidden;
+  margin: 0;
+  padding-top: 14px;
+}
+
+.service:is(:hover, :focus-visible)::before {
+  opacity: 1;
+  transform: none;
+}
+
+.service:is(:hover, :focus-visible) h3 {
+  color: var(--indigo);
+}
+
+.service:is(:hover, :focus-visible) .service-examples {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.service:is(:hover, :focus-visible) .service-glyph {
+  color: var(--paper);
+  transform: translateY(-4px);
+}
+
+.service:is(:hover, :focus-visible) .service-glyph rect {
+  fill: var(--indigo);
+  stroke-opacity: 0;
+}
+
+.service:focus-visible::before {
+  box-shadow: inset 0 0 0 2px var(--indigo);
+}
+
+/* Each motif moves in its own way */
+.service[data-motif='rings']:is(:hover, :focus-visible) .service-glyph circle {
+  animation: glyph-pulse 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.service[data-motif='rings'] .service-glyph circle:nth-of-type(2) { animation-delay: 0.15s; }
+.service[data-motif='rings'] .service-glyph circle:nth-of-type(3) { animation-delay: 0.3s; }
+
+.service[data-motif='dots']:is(:hover, :focus-visible) .service-glyph circle {
+  animation: glyph-wave 1.2s ease-in-out infinite;
+}
+
+.service[data-motif='dots'] .service-glyph circle:nth-of-type(4n + 2) { animation-delay: 0.1s; }
+.service[data-motif='dots'] .service-glyph circle:nth-of-type(4n + 3) { animation-delay: 0.2s; }
+.service[data-motif='dots'] .service-glyph circle:nth-of-type(4n + 4) { animation-delay: 0.3s; }
+
+.service[data-motif='stripes']:is(:hover, :focus-visible) .service-glyph path {
+  animation: glyph-slide 1.4s ease-in-out infinite;
+}
+
+.service[data-motif='zigzag']:is(:hover, :focus-visible) .service-glyph path {
+  /* Framer normalises path length to 1 for the draw-in, so dashes are fractions of the path */
+  stroke-dasharray: 0.12 0.08;
+  animation: glyph-flow 0.9s linear infinite;
+}
+
+@keyframes glyph-pulse {
+  0%, 100% { transform: scale(1); }
+  40% { transform: scale(1.14); }
+}
+
+@keyframes glyph-wave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes glyph-slide {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+}
+
+@keyframes glyph-flow {
+  to { stroke-dashoffset: -0.4; }
+}
+
+/* Touch screens have no hover, so show the examples outright */
+@media (hover: none) {
+  .service-examples {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-glyph * {
+    animation: none !important;
+  }
 }
 
 /* ------------------------------------------------------------------
