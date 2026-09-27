@@ -60,7 +60,7 @@ const Hero: React.FC = () => {
           ))}
         </h1>
 
-        <div className="lg:col-span-6 lg:self-center">
+        <div className="lg:col-span-6 lg:self-end lg:pb-12">
           <motion.p
             className="t-lead"
             initial={{ opacity: 0 }}

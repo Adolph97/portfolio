@@ -543,6 +543,20 @@ html.dark .logo-cell:hover .logo-img[data-tone='light'] {
   }
 }
 
+/* Adire motif per service */
+.service-glyph {
+  width: 48px;
+  height: 48px;
+  display: block;
+  color: var(--indigo);
+  overflow: visible;
+}
+
+.service-glyph circle {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
 /* ------------------------------------------------------------------
    Process: steps scroll past a pinned, animated scene
 ------------------------------------------------------------------- */
