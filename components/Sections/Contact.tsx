@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import AdirePattern from '../UI/AdirePattern';
 import { RevealHeading } from '../UI/Reveal';
 
@@ -115,7 +116,24 @@ const Contact: React.FC = () => {
 
               <div aria-live="polite">
                 {status === 'success' && (
-                  <p className="form-note m-0">Message sent. We'll get back to you soon.</p>
+                  <motion.p
+                    className="form-note m-0 flex items-center gap-3"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" className="shrink-0">
+                      <motion.circle
+                        cx="14" cy="14" r="12" stroke="#e8b33a" strokeWidth="2"
+                        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6 }}
+                      />
+                      <motion.path
+                        d="M8.5 14.5l3.5 3.5 7.5-8" stroke="#e8b33a" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
+                        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.4, delay: 0.5 }}
+                      />
+                    </svg>
+                    Message sent. We'll get back to you soon.
+                  </motion.p>
                 )}
                 {status === 'error' && (
                   <p className="form-note m-0">
