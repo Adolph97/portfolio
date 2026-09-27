@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  useVelocity,
-  type MotionValue,
-} from 'framer-motion';
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { RevealHeading, RevealText } from '../UI/Reveal';
 
 type Project = {
@@ -77,40 +69,24 @@ const projects: Project[] = [
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-/** Floating product card that trails the cursor over the list (mouse devices only). */
-const CursorPreview: React.FC<{ project: Project | null; x: MotionValue<number>; y: MotionValue<number> }> = ({ project, x, y }) => {
-  const sx = useSpring(x, { stiffness: 180, damping: 22, mass: 0.5 });
-  const sy = useSpring(y, { stiffness: 180, damping: 22, mass: 0.5 });
-  const rotate = useSpring(useTransform(useVelocity(x), [-1500, 1500], [-10, 10], { clamp: true }), { stiffness: 150, damping: 20 });
+type Filter = 'all' | 'live' | 'soon';
 
-  return (
-    <motion.div
-      aria-hidden="true"
-      className="cursor-preview"
-      style={{ x: sx, y: sy, rotate }}
-    >
-      <AnimatePresence>
-        {project?.image && (
-          <motion.div
-            key={project.title}
-            className="work-preview"
-            initial={{ opacity: 0, scale: 0.6, clipPath: 'inset(50% 50% 50% 50% round 24px)' }}
-            animate={{ opacity: 1, scale: 1, clipPath: 'inset(0% 0% 0% 0% round 24px)' }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.45, ease }}
-          >
-            <img src={project.image} alt="" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-};
+const filters: { id: Filter; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'live', label: 'Live' },
+  { id: 'soon', label: 'In development' },
+];
+
+const ArrowIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M5 11L11 5M6 5h5v5" />
+  </svg>
+);
 
 const Portfolio: React.FC = () => {
-  const [hovered, setHovered] = useState<Project | null>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+  const [filter, setFilter] = useState<Filter>('all');
+  const [hovered, setHovered] = useState<string | null>(null);
+  const visible = projects.filter((p) => filter === 'all' || p.status === filter);
 
   return (
     <section id="work" aria-labelledby="work-title" className="section">
@@ -123,75 +99,95 @@ const Portfolio: React.FC = () => {
           </RevealText>
         </div>
 
-        <ul
-          className="list-none m-0 p-0"
-          onPointerMove={(e) => {
-            x.set(e.clientX + 28);
-            y.set(e.clientY - 90);
-          }}
-          onPointerLeave={() => setHovered(null)}
-        >
-          {projects.map((p, i) => (
-            <motion.li
-              key={p.title}
-              className="work-row"
-              onPointerEnter={(e) => e.pointerType === 'mouse' && setHovered(p)}
-              initial="hidden"
-              whileInView="shown"
-              viewport={{ once: true, margin: '0px 0px -8% 0px' }}
-            >
-              <motion.span
-                aria-hidden="true"
-                className="work-rule"
-                variants={{ hidden: { scaleX: 0 }, shown: { scaleX: 1 } }}
-                transition={{ duration: 1.1, delay: i * 0.05, ease }}
-              />
-              <motion.div
-                className="work-thumb"
-                variants={{ hidden: { opacity: 0, scale: 0.85 }, shown: { opacity: 1, scale: 1 } }}
-                transition={{ duration: 0.8, delay: 0.1 + i * 0.05, ease }}
-              >
-                {p.image ? <img src={p.image} alt="" loading="lazy" /> : null}
-              </motion.div>
+        <LayoutGroup>
+          <div className="work-filters" role="tablist" aria-label="Filter projects">
+            {filters.map((f) => {
+              const count = projects.filter((p) => f.id === 'all' || p.status === f.id).length;
+              const selected = filter === f.id;
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  className="work-filter"
+                  data-selected={selected}
+                  onClick={() => setFilter(f.id)}
+                >
+                  {selected && <motion.span layoutId="work-filter-pill" className="work-filter-pill" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />}
+                  <span className="relative">{f.label}</span>
+                  <span className="relative work-filter-count">{count}</span>
+                </button>
+              );
+            })}
+          </div>
 
-              <motion.div
-                className="work-title"
-                variants={{ hidden: { opacity: 0, y: 18 }, shown: { opacity: 1, y: 0 } }}
-                transition={{ duration: 0.8, delay: 0.15 + i * 0.05, ease }}
-              >
-                <h3 className="t-h3 !text-[1.5rem] md:!text-[1.75rem]">{p.title}</h3>
-                <p className="t-small mt-1">{p.summary}</p>
-              </motion.div>
+          <motion.ul layout className="list-none m-0 p-0" onPointerLeave={() => setHovered(null)}>
+            <AnimatePresence initial={false} mode="popLayout">
+              {visible.map((p, i) => (
+                <motion.li
+                  key={p.title}
+                  layout
+                  className="work-row"
+                  data-hovered={hovered === p.title}
+                  onPointerEnter={(e) => e.pointerType === 'mouse' && setHovered(p.title)}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12, transition: { duration: 0.2 } }}
+                  transition={{ duration: 0.6, ease, layout: { type: 'spring', stiffness: 260, damping: 30 } }}
+                >
+                  {/* One soft highlight glides between rows instead of popping in on each */}
+                  {hovered === p.title && (
+                    <motion.span
+                      layoutId="work-hover"
+                      aria-hidden="true"
+                      className="work-hover"
+                      transition={{ type: 'spring', stiffness: 320, damping: 34 }}
+                    />
+                  )}
+                  <motion.span
+                    aria-hidden="true"
+                    className="work-rule"
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.1, delay: i * 0.05, ease }}
+                  />
 
-              <motion.div
-                className="col-start-2 min-[900px]:col-start-auto"
-                variants={{ hidden: { opacity: 0 }, shown: { opacity: 1 } }}
-                transition={{ duration: 0.8, delay: 0.25 + i * 0.05 }}
-              >
-                <p className="t-body">{p.desc}</p>
-                <p className="t-small mt-2">{p.category}</p>
-              </motion.div>
+                  <div className="work-thumb">
+                    {p.image ? <img src={p.image} alt="" loading="lazy" /> : null}
+                  </div>
 
-              <motion.div
-                className="col-start-2 min-[900px]:col-start-auto flex flex-row min-[900px]:flex-col items-center min-[900px]:items-end gap-4 min-[900px]:gap-3 flex-wrap"
-                variants={{ hidden: { opacity: 0 }, shown: { opacity: 1 } }}
-                transition={{ duration: 0.8, delay: 0.3 + i * 0.05 }}
-              >
-                <span className="status" data-state={p.status}>
-                  {p.status === 'live' ? 'Live' : 'In development'}
-                </span>
-                {p.url && (
-                  <a href={p.url} target="_blank" rel="noopener noreferrer" className="link font-semibold">
-                    {p.status === 'live' ? 'Visit site' : 'Preview'}
-                    <span className="sr-only"> for {p.title} (opens in a new tab)</span>
-                  </a>
-                )}
-              </motion.div>
-            </motion.li>
-          ))}
-        </ul>
+                  <div className="work-title">
+                    <h3 className="t-h3 !text-[1.5rem] md:!text-[1.75rem]">{p.title}</h3>
+                    <p className="t-small mt-1">{p.summary}</p>
+                  </div>
+
+                  <div className="col-start-2 min-[900px]:col-start-auto relative">
+                    <p className="t-body">{p.desc}</p>
+                    <p className="t-small mt-2">{p.category}</p>
+                  </div>
+
+                  <div className="col-start-2 min-[900px]:col-start-auto relative flex flex-row min-[900px]:flex-col items-center min-[900px]:items-end gap-4 min-[900px]:gap-3 flex-wrap">
+                    <span className="status" data-state={p.status}>
+                      {p.status === 'live' ? 'Live' : 'In development'}
+                    </span>
+                    {p.url && (
+                      <a href={p.url} target="_blank" rel="noopener noreferrer" className="work-link">
+                        {p.status === 'live' ? 'Visit site' : 'Preview'}
+                        <span className="work-link-icon">
+                          <ArrowIcon />
+                        </span>
+                        <span className="sr-only"> for {p.title} (opens in a new tab)</span>
+                      </a>
+                    )}
+                  </div>
+                </motion.li>
+              ))}
+            </AnimatePresence>
+          </motion.ul>
+        </LayoutGroup>
       </div>
-      <CursorPreview project={hovered} x={x} y={y} />
     </section>
   );
 };
