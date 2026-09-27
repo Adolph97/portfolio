@@ -8,6 +8,8 @@ type Project = {
   desc: string;
   category: string;
   image?: string;
+  /** 'contain' for wide wordmarks that shouldn't be cropped */
+  fit?: 'contain';
   status: 'live' | 'soon';
   url?: string;
 };
@@ -30,6 +32,16 @@ const projects: Project[] = [
     image: '/Logos/clock-it.png',
     status: 'live',
     url: 'https://clock-it.org',
+  },
+  {
+    title: '10xdev',
+    summary: 'Fullstack engineering courses',
+    desc: 'An online school with hands-on courses from Git basics to distributed architecture, priced for developers in Nigeria and across Africa.',
+    category: 'Education',
+    image: '/Logos/10xdev-logo.png',
+    fit: 'contain',
+    status: 'live',
+    url: 'https://10xdev.site',
   },
   {
     title: 'Loveet',
@@ -154,7 +166,7 @@ const Portfolio: React.FC = () => {
                     transition={{ duration: 1.1, delay: i * 0.05, ease }}
                   />
 
-                  <div className="work-thumb">
+                  <div className="work-thumb" data-fit={p.fit}>
                     {p.image ? <img src={p.image} alt="" loading="lazy" /> : null}
                   </div>
 

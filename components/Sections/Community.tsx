@@ -6,14 +6,27 @@ import CommunityScene from '../UI/CommunityScene';
 import { lockScroll, unlockScroll } from '../../lib/smoothScroll';
 
 const ease = [0.16, 1, 0.3, 1] as const;
-const EMAIL = 'hello@konatechlimited.org';
+const SITE = 'https://10xdev.site';
+const TELEGRAM = 'https://t.me/+IUo9Sji61KswOGU8';
+
+const facts = [
+  { value: '20+', label: 'structured courses' },
+  { value: '700+', label: 'interactive lessons' },
+  { value: '3', label: 'free lessons in every course' },
+];
 
 const pillars = [
-  { title: 'Learn in public', desc: 'Share what you’re figuring out, and learn from people a few steps ahead.' },
-  { title: 'Honest code review', desc: 'Real feedback on real work, from developers who want you to get better.' },
-  { title: 'Build together', desc: 'Team up on projects that go further than anyone would get alone.' },
-  { title: 'Open doors', desc: 'Pass on opportunities, introductions and advice to the people coming up next.' },
+  { title: 'Learn by building', desc: 'Every course is hands-on. You build real systems, not toy examples.' },
+  { title: 'Priced for here', desc: 'Courses cost about as much as a shawarma, so good training doesn’t break the bank.' },
+  { title: 'Try before you pay', desc: 'The first three lessons of every course are free, and buying gets you lifetime access.' },
+  { title: 'Learn together', desc: 'The Telegram community is where members swap code tips and get answers between lessons.' },
 ];
+
+const Logo: React.FC<{ className?: string }> = ({ className }) => (
+  <span className={`tenx-logo ${className ?? ''}`}>
+    <img src="/Logos/10xdev-logo.png" alt="10xdev" width={280} height={145} />
+  </span>
+);
 
 const Story: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const closeBtn = useRef<HTMLButtonElement>(null);
@@ -54,18 +67,20 @@ const Story: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
 
         <div className="story-body">
-          <h2 id="story-title" className="t-h2">10x Dev</h2>
-          <p className="t-lead mt-3">
-            A community for developers in Nigeria and across Africa, started by Kona Tech’s founder, Obinna Ihekona.
+          <Logo />
+          <h2 id="story-title" className="sr-only">10xdev</h2>
+          <p className="t-lead mt-5">
+            A fullstack engineering school and community, built by Kona Tech for developers in Nigeria and across Africa.
           </p>
 
           <p className="t-body mt-6">
-            Nigeria has no shortage of talented developers. What’s harder to find is what turns talent into craft:
-            people a few steps ahead who’ll review your code, share what they’ve learned and build alongside you.
+            Nigeria has no shortage of talented developers. What’s harder to find is affordable, structured training
+            that goes past tutorials, and people to learn with. 10xdev is Obinna’s answer to both.
           </p>
           <p className="t-body mt-4">
-            10x Dev is our way of growing that on purpose. It’s a place to learn in public, get honest feedback and
-            team up on real projects, so developers here can hold their own with the best teams anywhere.
+            The courses run from Git basics to distributed architecture: web development, Python, databases, React,
+            Next.js, NestJS and backend engineering, all taught by building real systems. It’s for complete beginners,
+            people switching into tech from roles like product, design or QA, and developers who want to go deeper.
           </p>
 
           <ul className="story-pillars">
@@ -83,19 +98,17 @@ const Story: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </ul>
 
           <p className="t-body">
-            It’s early, and it’s one of the projects we’re putting real time into. If you’d like to join, help run it
-            or support it, we’d love to hear from you.
+            It’s one of the projects we’re putting real time into, and the library keeps growing.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a href={`mailto:${EMAIL}?subject=10x%20Dev`} className="btn btn-primary">
-              Email us about 10x Dev
+            <a href={SITE} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+              Visit 10xdev.site
             </a>
-            <button type="button" className="btn btn-ghost" onClick={onClose}>
-              Close
-            </button>
+            <a href={TELEGRAM} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
+              Join the Telegram
+            </a>
           </div>
-          <p className="t-small mt-4">Or write to {EMAIL} with “10x Dev” in the subject.</p>
         </div>
       </motion.div>
     </motion.div>
@@ -115,12 +128,41 @@ const Community: React.FC = () => {
     <section id="community" aria-labelledby="community-title" className="section">
       <div className="wrap community-grid">
         <div className="community-copy">
-          <RevealHeading id="community-title" className="t-h2">10x Dev</RevealHeading>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -12% 0px' }}
+            transition={{ duration: 0.9, ease }}
+          >
+            <Logo className="mb-6" />
+          </motion.div>
+          <RevealHeading id="community-title" className="t-h2">Learn to build like a 10x developer</RevealHeading>
           <RevealText className="t-lead mt-5">
-            One of the projects we’re building: a community for developers in Nigeria and across Africa to learn,
-            review each other’s work and build together.
+            10xdev is our fullstack engineering school and community for developers in Nigeria and across Africa:
+            structured courses from Git basics to distributed systems, priced like a lunch snack.
           </RevealText>
-          <RevealText className="mt-8" delay={0.25}>
+
+          <motion.dl
+            className="tenx-facts"
+            initial="hidden"
+            whileInView="shown"
+            viewport={{ once: true, margin: '0px 0px -12% 0px' }}
+          >
+            {facts.map((f, i) => (
+              <motion.div
+                key={f.label}
+                variants={{ hidden: { opacity: 0, y: 12 }, shown: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.2 + i * 0.1, ease } } }}
+              >
+                <dt className="sr-only">{f.label}</dt>
+                <dd className="m-0">
+                  <span className="tenx-fact-value">{f.value}</span>
+                  <span className="t-small block mt-1">{f.label}</span>
+                </dd>
+              </motion.div>
+            ))}
+          </motion.dl>
+
+          <RevealText className="mt-8 flex flex-wrap gap-3" delay={0.25}>
             <button ref={trigger} type="button" className="btn btn-ghost story-trigger" onClick={() => setOpen(true)} aria-haspopup="dialog">
               Read the story
               <span className="story-trigger-icon" aria-hidden="true">
@@ -132,7 +174,7 @@ const Community: React.FC = () => {
           </RevealText>
         </div>
 
-        <button type="button" className="community-art" onClick={() => setOpen(true)} aria-label="Read the 10x Dev story">
+        <button type="button" className="community-art" onClick={() => setOpen(true)} aria-label="Read the 10xdev story">
           <CommunityScene className="w-full h-auto" />
         </button>
       </div>

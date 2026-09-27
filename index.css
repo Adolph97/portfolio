@@ -689,6 +689,16 @@ html.dark .work-hover {
   object-fit: cover;
 }
 
+/* Wide wordmarks sit on a white plate instead of being cropped */
+.work-thumb[data-fit='contain'] {
+  background: #fff;
+}
+
+.work-thumb[data-fit='contain'] img {
+  object-fit: contain;
+  padding: 10px;
+}
+
 .status {
   display: inline-flex;
   align-items: center;
@@ -1171,6 +1181,36 @@ html.dark .work-hover {
 
 .community-art:hover {
   transform: translateY(-4px);
+}
+
+.tenx-logo {
+  display: inline-flex;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.tenx-logo img {
+  display: block;
+  height: 52px;
+  width: auto;
+}
+
+.tenx-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 32px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.tenx-fact-value {
+  font-size: 1.75rem;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .story-trigger-icon {
