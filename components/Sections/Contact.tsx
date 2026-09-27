@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import SocialLinks from '../UI/SocialLinks';
+import AdirePattern from '../UI/AdirePattern';
+
+const EMAIL = 'hello@konatechlimited.org';
 
 const Contact: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,166 +21,109 @@ const Contact: React.FC = () => {
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
-      // Check if response is actually JSON before parsing
-      const contentType = response.headers.get("content-type");
-      let data;
-      if (contentType && contentType.includes("application/json")) {
-        data = await response.json();
-      }
+      const contentType = response.headers.get('content-type');
+      const data = contentType?.includes('application/json') ? await response.json() : undefined;
 
       if (response.ok) {
         setStatus('success');
         setFormData({ name: '', email: '', message: '' });
       } else {
         setStatus('error');
-        // Use backend details when available for faster SMTP debugging.
-        const composedMessage = data?.details ? `${data?.error || 'Request failed'} (${data.details})` : (data?.error || `Error ${response.status}: ${response.statusText}`);
-        setErrorMessage(composedMessage);
+        setErrorMessage(response.status === 400 ? 'Please fill in every field.' : 'Something went wrong on our side.');
         console.error('Server Error:', data || response.statusText);
       }
     } catch (error) {
       console.error('Submission error:', error);
       setStatus('error');
-      setErrorMessage(error instanceof Error ? error.message : 'Network error. Please try again later.');
+      setErrorMessage('Check your connection and try again.');
     }
   };
 
   return (
-    <section id="contact" className="py-16 md:py-24 px-5 md:px-24 bg-[var(--bg-color)] transition-colors duration-500">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-24 items-center">
-        <div className="space-y-10 md:space-y-12 relative">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-5xl md:text-9xl font-black tracking-tighter mb-6 md:mb-8 text-[var(--text-primary)] leading-[0.85]">
-              Initiate<br/>Uplink.
-            </h2>
-            <p className="text-[var(--text-secondary)] text-lg md:text-xl leading-relaxed max-w-sm">
-              Ready to architect the future? We are currently accepting high-impact mission briefs.
-            </p>
-          </motion.div>
-          
-          <div className="space-y-8 md:space-y-10">
-             <div className="space-y-3">
-               <div className="text-[10px] font-mono text-[var(--text-secondary)] uppercase tracking-[0.5em] opacity-50">Direct Connection</div>
-               <a href="mailto:hello@konatechlimited.org" className="text-xl md:text-3xl font-black hover:opacity-50 transition-opacity text-[var(--text-primary)] tracking-tight break-all">hello@konatechlimited.org</a>
-               <div className="pt-4">
-                 <SocialLinks />
-               </div>
-             </div>
+    <section id="contact" aria-labelledby="contact-title" className="section">
+      <div className="wrap">
+        <div className="contact-band adire">
+          <AdirePattern className="absolute inset-x-0 top-0 h-[72px] opacity-70" tile={72} />
+          <div className="relative grid gap-12 lg:grid-cols-2 lg:gap-16 px-7 pb-9 pt-[112px] sm:px-10 sm:pb-12 lg:px-16 lg:pb-16 lg:pt-[128px]">
+            <div>
+              <h2 id="contact-title" className="t-h2 text-white">Tell us what you're building</h2>
+              <p className="mt-5 text-[1.125rem] leading-relaxed max-w-[30em] text-[var(--on-indigo)] opacity-90">
+                Send a few lines about the problem you want solved. We'll reply with questions, a rough approach,
+                or an honest note if we're not the right fit.
+              </p>
 
-             <div className="space-y-6">
-                <div className="text-[10px] font-mono text-[var(--text-secondary)] uppercase tracking-[0.5em] opacity-50">Executive Interface</div>
-                <motion.a
-                  href="https://calendly.com/obinna-ihekona/zoom"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-4 md:gap-8 px-6 md:px-10 py-6 md:py-8 liquid-morph rounded-[24px] md:rounded-[32px] group hover:border-[var(--accent-color)] transition-all shadow-xl bg-[var(--glass-bg)]"
-                >
-                  <div className="space-y-1 text-left">
-                    <span className="block text-sm md:text-base font-black uppercase tracking-[0.15em] md:tracking-widest text-[var(--text-primary)]">Book Discovery Call</span>
-                    <span className="block text-[9px] md:text-[10px] font-mono opacity-50 uppercase tracking-[0.2em] md:tracking-widest">Calendly_Integration v2.0</span>
-                  </div>
-                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-[var(--glass-border)] flex items-center justify-center group-hover:bg-[var(--accent-color)] group-hover:text-[var(--bg-color)] transition-all shadow-inner">
-                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"/></svg>
-                  </div>
-                </motion.a>
-             </div>
+              <dl className="mt-10 grid gap-6">
+                <div>
+                  <dt className="text-[0.875rem] opacity-75">Email</dt>
+                  <dd className="m-0 mt-1">
+                    <a href={`mailto:${EMAIL}`} className="text-[1.25rem] md:text-[1.5rem] font-bold text-white underline underline-offset-4 decoration-1 decoration-white/40 hover:decoration-white break-all">
+                      {EMAIL}
+                    </a>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[0.875rem] opacity-75">Prefer to talk?</dt>
+                  <dd className="m-0 mt-3">
+                    <a
+                      href="https://calendly.com/obinna-ihekona/zoom"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-outline-light"
+                    >
+                      Book a discovery call
+                    </a>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <form onSubmit={handleSubmit} className="grid gap-5 content-start">
+              <div className="field">
+                <label htmlFor="contact-name">Your name</label>
+                <input id="contact-name" type="text" name="name" autoComplete="name" value={formData.name} onChange={handleChange} required />
+              </div>
+              <div className="field">
+                <label htmlFor="contact-email">Email</label>
+                <input id="contact-email" type="email" name="email" autoComplete="email" value={formData.email} onChange={handleChange} required />
+              </div>
+              <div className="field">
+                <label htmlFor="contact-message">What do you need help with?</label>
+                <textarea
+                  id="contact-message"
+                  rows={5}
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  placeholder="For example: our sales team tracks leads in WhatsApp and a spreadsheet, and things fall through the cracks."
+                  className="resize-y"
+                />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4 mt-1">
+                <button type="submit" disabled={status === 'sending'} className="btn btn-on-indigo">
+                  {status === 'sending' ? 'Sending…' : 'Send message'}
+                </button>
+              </div>
+
+              <div aria-live="polite">
+                {status === 'success' && (
+                  <p className="form-note m-0">Message sent. We'll get back to you soon.</p>
+                )}
+                {status === 'error' && (
+                  <p className="form-note m-0">
+                    Your message wasn't sent. {errorMessage} You can also email{' '}
+                    <a href={`mailto:${EMAIL}`} className="underline">{EMAIL}</a> directly.
+                  </p>
+                )}
+              </div>
+            </form>
           </div>
         </div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="liquid-morph p-6 md:p-16 relative rounded-[28px] md:rounded-[48px] shadow-2xl overflow-hidden border border-[var(--glass-border)]"
-        >
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-[var(--accent-color)] to-transparent opacity-10" />
-          
-          <form onSubmit={handleSubmit} className="space-y-8 md:space-y-12">
-            <div className="relative group">
-              <label className="text-[9px] md:text-[10px] font-mono uppercase tracking-[0.2em] md:tracking-[0.4em] text-[var(--text-secondary)] block mb-3 font-bold">Subject_ID / Name</label>
-              <input 
-                type="text" 
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                placeholder="Ex. Chief Technology Officer"
-                className="w-full bg-[var(--input-bg)] border border-[var(--glass-border)] rounded-2xl px-5 md:px-6 py-4 md:py-5 outline-none focus:border-[var(--accent-color)] transition-all font-bold placeholder:opacity-30 text-[var(--text-primary)] shadow-sm"
-              />
-            </div>
-            
-            <div className="relative group">
-              <label className="text-[9px] md:text-[10px] font-mono uppercase tracking-[0.2em] md:tracking-[0.4em] text-[var(--text-secondary)] block mb-3 font-bold">Comms_Route / Email</label>
-              <input 
-                type="email" 
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                placeholder="connection@domain.com"
-                className="w-full bg-[var(--input-bg)] border border-[var(--glass-border)] rounded-2xl px-5 md:px-6 py-4 md:py-5 outline-none focus:border-[var(--accent-color)] transition-all font-bold placeholder:opacity-30 text-[var(--text-primary)] shadow-sm"
-              />
-            </div>
-
-            <div className="relative group">
-              <label className="text-[9px] md:text-[10px] font-mono uppercase tracking-[0.2em] md:tracking-[0.4em] text-[var(--text-secondary)] block mb-3 font-bold">Mission_Parameters</label>
-              <textarea 
-                rows={4}
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                required
-                placeholder="Describe your architectural requirements..."
-                className="w-full bg-[var(--input-bg)] border border-[var(--glass-border)] rounded-2xl px-5 md:px-6 py-4 md:py-5 outline-none focus:border-[var(--accent-color)] transition-all font-bold resize-none placeholder:opacity-30 text-[var(--text-primary)] shadow-sm"
-              />
-            </div>
-
-            <button 
-              type="submit"
-              disabled={status === 'sending'}
-              className="w-full py-5 md:py-7 bg-[var(--accent-color)] text-[var(--bg-color)] font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] md:tracking-[0.6em] font-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 md:gap-4 rounded-[24px] shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {status === 'sending' ? 'Transmitting...' : 'Broadcast_Transmission'}
-            </button>
-
-            {status === 'success' && (
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-green-500 font-mono text-xs text-center"
-              >
-                Transmission received successfully. Uplink established.
-              </motion.p>
-            )}
-
-            {status === 'error' && (
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-red-500 font-mono text-xs text-center"
-              >
-                {errorMessage}
-              </motion.p>
-            )}
-          </form>
-
-          <div className="mt-12 flex justify-between items-center opacity-30 font-mono text-[9px] uppercase tracking-[0.3em]">
-            <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-500" /> Layer_Secure</span>
-            <span>RSA-4096 Enabled</span>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

@@ -72,7 +72,7 @@ const GlobeMesh: React.FC<{
           color={color}
           wireframe
           transparent
-          opacity={isDarkMode ? 0.28 : 0.52}
+          opacity={isDarkMode ? 0.35 : 0.45}
           roughness={0.6}
           metalness={0.1}
         />
@@ -118,14 +118,14 @@ const RotatingGlobe: React.FC<{
   locations?: GlobeLocation[];
   onActiveLocationChange?: (name: string) => void;
 }> = ({ isDarkMode, locations = DEFAULT_LOCATIONS, onActiveLocationChange }) => {
-  const color = isDarkMode ? '#ffffff' : '#000000';
-  const highlightColor = '#00FF00';
+  const color = isDarkMode ? '#97a6ff' : '#2e3d99';
+  const highlightColor = isDarkMode ? '#f0b93a' : '#e0a526';
 
   return (
     <div className="w-full h-full">
       <Canvas
         dpr={[1, 1.5]}
-        camera={{ position: [0, 0, 3.2], fov: 34 }}
+        camera={{ position: [0, 0, 4], fov: 34 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         {/* @ts-ignore */}

@@ -5,8 +5,6 @@ import Hero from './components/Sections/Hero';
 import Portfolio from './components/Sections/Portfolio';
 import Services from './components/Sections/Services';
 import Process from './components/Sections/Process';
-import TechStack from './components/Sections/TechStack';
-import Testimonials from './components/Sections/Testimonials';
 import GlobalPresence from './components/Sections/GlobalPresence';
 import Contact from './components/Sections/Contact';
 import ScrollToTop from './components/UI/ScrollToTop';
@@ -51,8 +49,6 @@ const App: React.FC = () => {
         <Portfolio />
         <Services />
         <Process />
-        <TechStack />
-        <Testimonials />
         <GlobalPresence isDarkMode={isDarkMode} />
         <Contact />
       </main>
