@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { MotionConfig } from 'framer-motion';
 import Navigation, { KonaMark } from './components/Navigation';
 import Hero from './components/Sections/Hero';
+import Clients from './components/Sections/Clients';
 import Portfolio from './components/Sections/Portfolio';
 import Services from './components/Sections/Services';
 import Process from './components/Sections/Process';
+import Team from './components/Sections/Team';
 import GlobalPresence from './components/Sections/GlobalPresence';
 import Contact from './components/Sections/Contact';
 import ScrollToTop from './components/UI/ScrollToTop';
@@ -46,9 +48,11 @@ const App: React.FC = () => {
 
       <main id="main">
         <Hero />
+        <Clients />
         <Portfolio />
         <Services />
         <Process />
+        <Team />
         <GlobalPresence isDarkMode={isDarkMode} />
         <Contact />
       </main>
