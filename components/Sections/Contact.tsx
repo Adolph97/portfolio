@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import AdirePattern from '../UI/AdirePattern';
+import { RevealHeading } from '../UI/Reveal';
 
 const EMAIL = 'hello@konatechlimited.org';
 
@@ -47,10 +48,12 @@ const Contact: React.FC = () => {
     <section id="contact" aria-labelledby="contact-title" className="section">
       <div className="wrap">
         <div className="contact-band adire">
-          <AdirePattern className="absolute inset-x-0 top-0 h-[72px] opacity-70" tile={72} />
+          <div className="adire-strip" aria-hidden="true">
+            <AdirePattern tile={72} />
+          </div>
           <div className="relative grid gap-12 lg:grid-cols-2 lg:gap-16 px-7 pb-9 pt-[112px] sm:px-10 sm:pb-12 lg:px-16 lg:pb-16 lg:pt-[128px]">
             <div>
-              <h2 id="contact-title" className="t-h2 text-white">Tell us what you're building</h2>
+              <RevealHeading id="contact-title" className="t-h2 text-white">Tell us what you're building</RevealHeading>
               <p className="mt-5 text-[1.125rem] leading-relaxed max-w-[30em] text-[var(--on-indigo)] opacity-90">
                 Send a few lines about the problem you want solved. We'll reply with questions, a rough approach,
                 or an honest note if we're not the right fit.

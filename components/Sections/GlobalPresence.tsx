@@ -1,5 +1,6 @@
 import React, { Suspense, lazy, useState } from 'react';
 import type { GlobeLocation } from '../UI/RotatingGlobe';
+import { RevealHeading, RevealText } from '../UI/Reveal';
 
 // three.js is heavy; load it only when this section renders.
 const RotatingGlobe = lazy(() => import('../UI/RotatingGlobe'));
@@ -24,11 +25,11 @@ const GlobalPresence: React.FC<GlobalPresenceProps> = ({ isDarkMode }) => {
     <section id="reach" aria-labelledby="reach-title" className="section">
       <div className="wrap grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
         <div>
-          <h2 id="reach-title" className="t-h2">Based in Lagos, working across six countries</h2>
-          <p className="t-body mt-5">
+          <RevealHeading id="reach-title" className="t-h2">Based in Lagos, working across six countries</RevealHeading>
+          <RevealText className="t-body mt-5">
             Most of our work happens remotely, across time zones. We keep hours that overlap with yours and
             hold calls when it suits you.
-          </p>
+          </RevealText>
           <ul className="list-none m-0 p-0 mt-10 border-t border-[var(--line)]">
             {GLOBAL_LOCATIONS.map((location) => {
               const active = location.name === activeLocation;

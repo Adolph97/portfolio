@@ -36,9 +36,19 @@ export const KonaMark: React.FC<{ size?: number }> = ({ size = 28 }) => (
 const Navigation: React.FC<NavigationProps> = ({ toggleTheme, isDarkMode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 8);
+      // Tuck the bar away while reading down; bring it back on any scroll up
+      if (Math.abs(y - lastY) > 6) {
+        setHidden(y > lastY && y > 320);
+        lastY = y;
+      }
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -47,7 +57,7 @@ const Navigation: React.FC<NavigationProps> = ({ toggleTheme, isDarkMode }) => {
   const themeLabel = isDarkMode ? 'Switch to light theme' : 'Switch to dark theme';
 
   return (
-    <header className="nav" data-scrolled={scrolled || isMenuOpen}>
+    <header className="nav" data-scrolled={scrolled || isMenuOpen} data-hidden={hidden && !isMenuOpen} onFocusCapture={() => setHidden(false)}>
       <div className="wrap nav-inner">
         <a href="#top" className="flex items-center gap-3 no-underline" onClick={() => setIsMenuOpen(false)}>
           <KonaMark />

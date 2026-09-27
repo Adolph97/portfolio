@@ -1,4 +1,5 @@
 import React from 'react';
+import { RevealHeading, RevealText } from '../UI/Reveal';
 
 const services = [
   {
@@ -25,11 +26,11 @@ const Services: React.FC = () => (
   <section id="services" aria-labelledby="services-title" className="section">
     <div className="wrap">
       <div className="section-head">
-        <h2 id="services-title" className="t-h2">What we do</h2>
-        <p className="t-body">
+        <RevealHeading id="services-title" className="t-h2">What we do</RevealHeading>
+        <RevealText className="t-body">
           Four kinds of work, often mixed on one project. We start from the business problem and pick the
           technology after.
-        </p>
+        </RevealText>
       </div>
 
       <div className="service-grid">

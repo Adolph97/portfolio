@@ -54,6 +54,20 @@ html {
   }
 }
 
+/* Lenis smooth scrolling takes over from native smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   background: var(--paper);
@@ -242,7 +256,11 @@ html.dark .btn-primary:hover {
   backdrop-filter: blur(14px) saturate(160%);
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav[data-hidden='true'] {
+  transform: translateY(-100%);
 }
 
 .nav[data-scrolled='true'] {
@@ -374,12 +392,63 @@ html.dark .logo-cell:hover .logo-img[data-tone='light'] {
    Work list
 ------------------------------------------------------------------- */
 .work-row {
+  position: relative;
   display: grid;
   grid-template-columns: 72px 1fr;
   gap: 20px;
   padding-block: 28px;
-  border-top: 1px solid var(--line);
   align-items: start;
+}
+
+/* Divider that draws itself in as the row arrives */
+.work-rule {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: var(--line);
+  transform-origin: left center;
+}
+
+.work-title h3 {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-row:hover .work-title h3 {
+    transform: translateX(10px);
+    color: var(--indigo);
+  }
+}
+
+.cursor-preview {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  pointer-events: none;
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cursor-preview {
+    display: block;
+  }
+}
+
+.work-preview {
+  width: 220px;
+  height: 220px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 30px 60px -20px rgba(10, 14, 40, 0.45);
+}
+
+.work-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .work-row:last-child {
@@ -520,7 +589,7 @@ html.dark .logo-cell:hover .logo-img[data-tone='light'] {
   background: var(--paper);
   border: 1.5px solid var(--ink);
   color: var(--ink);
-  z-index: 1;
+  z-index: 2;
 }
 
 /* Connecting thread between steps */
@@ -543,6 +612,43 @@ html.dark .logo-cell:hover .logo-img[data-tone='light'] {
     width: auto;
     height: 1.5px;
   }
+}
+
+/* Scroll-driven fill over each connector */
+.step-fill {
+  position: absolute;
+  left: 19px;
+  top: 40px;
+  bottom: -32px;
+  width: 1.5px;
+  background: var(--indigo);
+  transform-origin: top center;
+  transform: scaleY(var(--p, 0));
+  z-index: 1;
+}
+
+@media (min-width: 900px) {
+  .step-fill {
+    left: 40px;
+    right: -28px;
+    top: 19px;
+    bottom: auto;
+    width: auto;
+    height: 1.5px;
+    transform-origin: left center;
+    transform: scaleX(var(--p, 0));
+  }
+}
+
+.step-num {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.step[data-reached='true'] .step-num {
+  background: var(--indigo);
+  border-color: var(--indigo);
+  color: var(--paper);
+  transform: scale(1.08);
 }
 
 /* ------------------------------------------------------------------
@@ -603,6 +709,32 @@ html.dark .logo-cell:hover .logo-img[data-tone='light'] {
   }
 }
 
+.portrait {
+  position: relative;
+}
+
+.portrait .portrait-color {
+  position: absolute;
+  inset: 0;
+  filter: none;
+  mix-blend-mode: normal;
+  clip-path: circle(0% at var(--x, 50%) var(--y, 50%));
+  transition: clip-path 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portrait img {
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .portrait:hover .portrait-color {
+    clip-path: circle(150% at var(--x, 50%) var(--y, 50%));
+  }
+  .portrait:hover img {
+    transform: scale(1.04);
+  }
+}
+
 html.dark .portrait {
   background: #aab5f2;
 }
@@ -615,6 +747,32 @@ html.dark .portrait {
   overflow: hidden;
   border-radius: 28px;
   color: var(--on-indigo);
+}
+
+/* Adire strip along the top of the contact band drifts slowly sideways */
+.adire-strip {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 72px;
+  overflow: hidden;
+  opacity: 0.7;
+}
+
+.adire-strip > svg {
+  width: calc(100% + 144px) !important;
+  animation: adire-drift 14s linear infinite;
+}
+
+@keyframes adire-drift {
+  to {
+    transform: translateX(-144px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adire-strip > svg {
+    animation: none;
+  }
 }
 
 .field {

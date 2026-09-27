@@ -11,10 +11,13 @@ import GlobalPresence from './components/Sections/GlobalPresence';
 import Contact from './components/Sections/Contact';
 import ScrollToTop from './components/UI/ScrollToTop';
 import SocialLinks from './components/UI/SocialLinks';
+import { startSmoothScroll } from './lib/smoothScroll';
 
 const App: React.FC = () => {
   // index.html sets the initial class before paint; read it back so state matches.
   const [isDarkMode, setIsDarkMode] = useState(() => document.documentElement.classList.contains('dark'));
+
+  useEffect(() => startSmoothScroll(), []);
 
   useEffect(() => {
     const root = document.documentElement;

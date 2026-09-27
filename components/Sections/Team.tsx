@@ -1,4 +1,5 @@
 import React from 'react';
+import { RevealHeading, RevealText } from '../UI/Reveal';
 
 type Member = {
   name: string;
@@ -23,18 +24,27 @@ const Team: React.FC = () => (
   <section id="team" aria-labelledby="team-title" className="section">
     <div className="wrap">
       <div className="section-head">
-        <h2 id="team-title" className="t-h2">The team</h2>
-        <p className="t-body">
+        <RevealHeading id="team-title" className="t-h2">The team</RevealHeading>
+        <RevealText className="t-body">
           We're a small team on purpose. You talk directly to the people designing and building your product,
           not to an account manager relaying messages.
-        </p>
+        </RevealText>
       </div>
 
       <ul className="team-grid list-none m-0 p-0">
         {team.map((member) => (
           <li key={member.name}>
-            <div className="portrait">
+            <div
+              className="portrait"
+              onPointerEnter={(e) => {
+                // Colour wipes in from wherever the pointer enters
+                const r = e.currentTarget.getBoundingClientRect();
+                e.currentTarget.style.setProperty('--x', `${((e.clientX - r.left) / r.width) * 100}%`);
+                e.currentTarget.style.setProperty('--y', `${((e.clientY - r.top) / r.height) * 100}%`);
+              }}
+            >
               <img src={encodeURI(member.photo)} alt="" loading="lazy" />
+              <img src={encodeURI(member.photo)} alt="" loading="lazy" className="portrait-color" />
             </div>
             <div>
               <h3 className="t-h3">{member.name}</h3>

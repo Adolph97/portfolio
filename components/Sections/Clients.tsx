@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 type Client = {
   name: string;
@@ -25,8 +26,15 @@ const Clients: React.FC = () => (
         Companies we've worked with
       </h2>
       <ul className="logo-grid list-none m-0 p-0">
-        {clients.map((client) => (
-          <li key={client.name} className="logo-cell">
+        {clients.map((client, i) => (
+          <motion.li
+            key={client.name}
+            className="logo-cell"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.8, delay: 0.2 + i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="flex-1 w-full flex items-center justify-center">
               <img
                 src={encodeURI(client.logo)}
@@ -38,7 +46,7 @@ const Clients: React.FC = () => (
               />
             </div>
             <span className="t-small text-center leading-tight">{client.name}</span>
-          </li>
+          </motion.li>
         ))}
       </ul>
     </div>
