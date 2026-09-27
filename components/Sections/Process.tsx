@@ -282,16 +282,34 @@ const Process: React.FC = () => {
                 data-active={i === active}
                 className="process-step"
               >
-                <button
-                  type="button"
-                  className="process-step-btn"
-                  onClick={() => items.current[i] && scrollTo(items.current[i]!, { center: true })}
-                  aria-current={i === active ? 'step' : undefined}
+                {/* Text resolves into focus as its step becomes active, then softens as it passes */}
+                <motion.div
+                  initial={false}
+                  animate={
+                    i === active
+                      ? { opacity: 1, y: 0, filter: 'blur(0px)' }
+                      : { opacity: 0.22, y: i < active ? -14 : 14, filter: 'blur(3px)' }
+                  }
+                  transition={{ duration: 0.7, ease }}
                 >
-                  <span className="process-step-kicker">Step {i + 1} of {steps.length}</span>
-                  <span className="process-step-title">{s.title}</span>
-                </button>
-                <p className="t-body mt-3">{s.desc}</p>
+                  <button
+                    type="button"
+                    className="process-step-btn"
+                    onClick={() => items.current[i] && scrollTo(items.current[i]!, { center: true })}
+                    aria-current={i === active ? 'step' : undefined}
+                  >
+                    <span className="process-step-kicker">Step {i + 1} of {steps.length}</span>
+                    <span className="process-step-title">{s.title}</span>
+                  </button>
+                  <motion.p
+                    className="t-body mt-3"
+                    initial={false}
+                    animate={i === active ? { opacity: 1, y: 0 } : { opacity: 0.6, y: 6 }}
+                    transition={{ duration: 0.6, delay: i === active ? 0.12 : 0, ease }}
+                  >
+                    {s.desc}
+                  </motion.p>
+                </motion.div>
               </li>
             ))}
           </ol>
