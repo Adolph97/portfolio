@@ -176,9 +176,9 @@ const Cloth: React.FC<{ pointer: React.RefObject<PointerState>; onReady?: () => 
       uPointer: { value: new THREE.Vector3() },
       uTex: { value: texture },
       uRepeat: { value: new THREE.Vector2(1, 1) },
-      uBase: { value: new THREE.Color('#2f3f9e') },
-      uDeep: { value: new THREE.Color('#121945') },
-      uThread: { value: new THREE.Color('#dfe4ff') },
+      uBase: { value: new THREE.Color('#22538f') },
+      uDeep: { value: new THREE.Color('#0b2140') },
+      uThread: { value: new THREE.Color('#e2ecf8') },
     }),
     [texture]
   );

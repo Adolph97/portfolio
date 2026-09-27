@@ -275,8 +275,8 @@ const RotatingGlobe: React.FC<{
   }, [activeIndex, locations, onActiveLocationChange]);
 
   const palette: Palette = isDarkMode
-    ? { dot: '#8f9dff', glow: '#5566e0', glowStrength: 0.9, arc: '#f0b93a', marker: '#f0b93a' }
-    : { dot: '#2e3d99', glow: '#7d8ef0', glowStrength: 0.55, arc: '#d99a17', marker: '#d99a17' };
+    ? { dot: '#86b0ea', glow: '#3f78c8', glowStrength: 0.9, arc: '#f0b93a', marker: '#f0b93a' }
+    : { dot: '#1d4a8c', glow: '#7aa6de', glowStrength: 0.55, arc: '#d99a17', marker: '#d99a17' };
 
   return (
     <div

@@ -21,7 +21,7 @@ const ScrollToTop: React.FC = () => {
           exit={{ opacity: 0 }}
           onClick={() => scrollTo(0)}
           aria-label="Back to top"
-          className="icon-btn fixed bottom-5 right-5 md:bottom-8 md:right-8 z-40 !w-11 !h-11 bg-[var(--paper)] shadow-[0_8px_24px_-12px_rgba(21,26,48,0.4)]"
+          className="icon-btn fixed bottom-5 right-5 md:bottom-8 md:right-8 z-40 !w-11 !h-11 bg-[var(--paper)] shadow-[0_8px_24px_-12px_rgba(17,27,41,0.4)]"
         >
           <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M12 19V5M5 12l7-7 7 7" />

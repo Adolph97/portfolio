@@ -114,7 +114,7 @@ const Hero: React.FC = () => {
               <motion.img
                 src="/images/hero-image.jpg"
                 alt="Obinna Ihekona, founder of Kona Tech"
-                className="absolute left-[14%] top-[12%] w-[62%] aspect-[3/4] object-cover rounded-[18px] shadow-[0_30px_70px_-20px_rgba(6,10,36,0.85)] will-change-transform"
+                className="absolute left-[14%] top-[12%] w-[62%] aspect-[3/4] object-cover rounded-[18px] shadow-[0_30px_70px_-20px_rgba(4,14,30,0.85)] will-change-transform"
                 style={{ rotateX, rotateY, x: shiftX, y: shiftY }}
                 initial={{ opacity: 0, scale: 0.94 }}
                 animate={{ opacity: 1, scale: 1 }}

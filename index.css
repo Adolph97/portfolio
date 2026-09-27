@@ -6,34 +6,34 @@
 html.light {
   --paper: #f1f2f5;
   --surface: #ffffff;
-  --ink: #151a30;
-  --ink-2: #4a5068;
-  --ink-3: #6b7189;
-  --line: #d6d9e2;
-  --indigo: #2e3d99;
-  --indigo-deep: #1c2766;
-  --indigo-pale: #c9d1f5;
+  --ink: #111b29;
+  --ink-2: #475467;
+  --ink-3: #687487;
+  --line: #d5dbe3;
+  --indigo: #1d4a8c;
+  --indigo-deep: #13335f;
+  --indigo-pale: #c6d7ec;
   --ochre: #e0a526;
-  --on-indigo: #eef0ff;
-  --pattern-stroke: rgba(226, 231, 255, 0.5);
+  --on-indigo: #eaf1fa;
+  --pattern-stroke: rgba(222, 234, 248, 0.5);
   --nav-bg: rgba(241, 242, 245, 0.85);
   color-scheme: light;
 }
 
 html.dark {
-  --paper: #0f1220;
-  --surface: #171b2e;
-  --ink: #eceef5;
-  --ink-2: #a3a9c0;
-  --ink-3: #7d839c;
-  --line: #2a2f47;
-  --indigo: #97a6ff;
-  --indigo-deep: #243080;
-  --indigo-pale: #3a4585;
+  --paper: #0b1420;
+  --surface: #132030;
+  --ink: #e9eef5;
+  --ink-2: #a2aebe;
+  --ink-3: #7b889a;
+  --line: #233246;
+  --indigo: #86b0ea;
+  --indigo-deep: #153a6e;
+  --indigo-pale: #2f4c78;
   --ochre: #f0b93a;
-  --on-indigo: #eef0ff;
-  --pattern-stroke: rgba(226, 231, 255, 0.38);
-  --nav-bg: rgba(15, 18, 32, 0.85);
+  --on-indigo: #eaf1fa;
+  --pattern-stroke: rgba(222, 234, 248, 0.38);
+  --nav-bg: rgba(11, 20, 32, 0.85);
   color-scheme: dark;
 }
 
@@ -313,7 +313,7 @@ html.dark .btn-primary:hover {
 }
 
 html.light .adire {
-  background-color: #253384;
+  background-color: #183f78;
 }
 
 /* ------------------------------------------------------------------
@@ -441,7 +441,7 @@ html.dark .logo-cell:hover .logo-img[data-tone='light'] {
   border-radius: 24px;
   overflow: hidden;
   background: var(--surface);
-  box-shadow: 0 30px 60px -20px rgba(10, 14, 40, 0.45);
+  box-shadow: 0 30px 60px -20px rgba(8, 18, 32, 0.45);
 }
 
 .work-preview img {
@@ -736,7 +736,7 @@ html.dark .logo-cell:hover .logo-img[data-tone='light'] {
 }
 
 html.dark .portrait {
-  background: #aab5f2;
+  background: #a9c3e6;
 }
 
 /* ------------------------------------------------------------------
@@ -801,7 +801,7 @@ html.dark .portrait {
 
 html.light .field input,
 html.light .field textarea {
-  color: #151a30;
+  color: #111b29;
   background: #ffffff;
 }
 
@@ -818,7 +818,7 @@ html.light .field textarea {
 
 .btn-on-indigo {
   background: var(--ochre);
-  color: #151a30;
+  color: #111b29;
 }
 
 .btn-on-indigo:hover {
