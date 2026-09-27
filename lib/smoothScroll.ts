@@ -31,3 +31,14 @@ export const scrollTo = (target: number | string | HTMLElement, { center = false
   const top = el ? el.getBoundingClientRect().top + window.scrollY + offset : (target as number);
   window.scrollTo({ top, behavior: 'smooth' });
 };
+
+/** Freezes page scrolling (e.g. while a dialog is open). */
+export const lockScroll = () => {
+  lenis?.stop();
+  document.documentElement.style.overflow = 'hidden';
+};
+
+export const unlockScroll = () => {
+  lenis?.start();
+  document.documentElement.style.overflow = '';
+};

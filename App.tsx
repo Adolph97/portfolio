@@ -4,6 +4,7 @@ import Navigation, { KonaMark } from './components/Navigation';
 import Hero from './components/Sections/Hero';
 import Clients from './components/Sections/Clients';
 import Portfolio from './components/Sections/Portfolio';
+import Community from './components/Sections/Community';
 import Services from './components/Sections/Services';
 import Process from './components/Sections/Process';
 import Team from './components/Sections/Team';
@@ -53,6 +54,7 @@ const App: React.FC = () => {
         <Hero />
         <Clients />
         <Portfolio />
+        <Community />
         <Services />
         <Process />
         <Team />
