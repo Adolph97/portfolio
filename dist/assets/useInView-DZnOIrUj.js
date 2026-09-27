@@ -1,0 +1,1 @@
+import{b as r}from"./three-BYNSkbCX.js";const p=(e,t="100px")=>{const[c,i]=r.useState(!0);return r.useEffect(()=>{const n=e.current;if(!n)return;const s=new IntersectionObserver(([o])=>i(o.isIntersecting),{rootMargin:t});return s.observe(n),()=>s.disconnect()},[e,t]),c};export{p as u};
