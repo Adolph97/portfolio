@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion';
 import { RevealHeading, RevealText } from '../UI/Reveal';
 import AdirePattern from '../UI/AdirePattern';
 import { scrollTo } from '../../lib/smoothScroll';
@@ -211,25 +211,190 @@ const ProcessScene: React.FC<{ step: number }> = ({ step }) => (
 );
 
 // ------------------------------------------------------------------
-// Section: steps scroll past a pinned scene; the step in the middle of the viewport drives it.
+// Shared bits
 // ------------------------------------------------------------------
-const Process: React.FC = () => {
+const useIsDesktop = () => {
+  const query = '(min-width: 960px)';
+  const [match, setMatch] = useState(() => window.matchMedia(query).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const on = () => setMatch(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  return match;
+};
+
+const ScenePanel: React.FC<{ active: number }> = ({ active }) => (
+  <div className="process-panel adire">
+    <AdirePattern className="absolute inset-0 opacity-[0.12]" tile={96} />
+    <div className="relative h-full p-[6%]">
+      <ProcessScene step={active} />
+    </div>
+    <div className="process-meter" aria-hidden="true">
+      {steps.map((s, i) => (
+        <span key={s.title}>
+          <motion.i initial={false} animate={{ scaleX: i <= active ? 1 : 0 }} transition={{ duration: 0.6, ease }} />
+        </span>
+      ))}
+    </div>
+  </div>
+);
+
+/** A title whose letters fall away and rise back in as the word changes. */
+const MorphTitle: React.FC<{ text: string }> = ({ text }) => (
+  <span className="morph-title" aria-hidden="true">
+    <AnimatePresence mode="popLayout" initial={false}>
+      <motion.span key={text} className="morph-word">
+        {text.split('').map((ch, i) => (
+          <motion.span
+            key={i}
+            className="inline-block"
+            initial={{ y: '0.9em', opacity: 0, filter: 'blur(8px)', rotateX: -70 }}
+            animate={{ y: 0, opacity: 1, filter: 'blur(0px)', rotateX: 0, transition: { duration: 0.7, delay: 0.18 + i * 0.035, ease } }}
+            exit={{ y: '-0.7em', opacity: 0, filter: 'blur(8px)', rotateX: 70, transition: { duration: 0.35, delay: i * 0.02, ease: 'easeIn' } }}
+          >
+            {ch}
+          </motion.span>
+        ))}
+      </motion.span>
+    </AnimatePresence>
+  </span>
+);
+
+// ------------------------------------------------------------------
+// Desktop: the section pins; scroll progress morphs one step into the next
+// ------------------------------------------------------------------
+const PinnedProcess: React.FC = () => {
+  const pin = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+  const { scrollYProgress } = useScroll({ target: pin, offset: ['start start', 'end end'] });
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30 });
+
+  useMotionValueEvent(scrollYProgress, 'change', (v: number) => {
+    setActive(Math.min(steps.length - 1, Math.max(0, Math.floor(v * steps.length))));
+  });
+
+  const jumpTo = (i: number) => {
+    const el = pin.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    const travel = el.offsetHeight - window.innerHeight;
+    scrollTo(top + (travel * (i + 0.5)) / steps.length);
+  };
+
+  return (
+    <div ref={pin} className="process-pin" style={{ height: `${steps.length * 70 + 100}vh` }}>
+      <div className="process-sticky">
+        <div className="process-sticky-copy">
+          <ol className="process-rail" aria-label="Project stages">
+            {steps.map((s, i) => (
+              <li key={s.title}>
+                <button type="button" onClick={() => jumpTo(i)} data-active={i === active} aria-current={i === active ? 'step' : undefined}>
+                  {i === active && <motion.span layoutId="process-rail-dot" className="process-rail-dot" transition={{ type: 'spring', stiffness: 380, damping: 30 }} />}
+                  {s.title}
+                </button>
+              </li>
+            ))}
+          </ol>
+
+          <div className="process-now" aria-live="polite">
+            <div className="process-kicker">
+              <span>Step</span>
+              <span className="process-kicker-num">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span
+                    key={active}
+                    className="inline-block"
+                    initial={{ y: '100%', opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: '-100%', opacity: 0 }}
+                    transition={{ duration: 0.45, ease }}
+                  >
+                    {active + 1}
+                  </motion.span>
+                </AnimatePresence>
+              </span>
+              <span>of {steps.length}</span>
+            </div>
+
+            <h3 className="process-now-title">
+              <span className="sr-only">{steps[active].title}</span>
+              <MorphTitle text={steps[active].title} />
+            </h3>
+
+            <div className="process-now-desc">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.p
+                  key={active}
+                  className="t-lead"
+                  initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.7, delay: 0.3, ease } }}
+                  exit={{ opacity: 0, y: -12, filter: 'blur(6px)', transition: { duration: 0.3 } }}
+                >
+                  {steps[active].desc}
+                </motion.p>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          <div className="process-track" aria-hidden="true">
+            <motion.i style={{ scaleX: progress }} />
+          </div>
+        </div>
+
+        <ScenePanel active={active} />
+      </div>
+    </div>
+  );
+};
+
+// ------------------------------------------------------------------
+// Mobile: a pinned scene with steps scrolling beneath it
+// ------------------------------------------------------------------
+const StackedProcess: React.FC = () => {
   const [active, setActive] = useState(0);
   const items = useRef<(HTMLLIElement | null)[]>([]);
 
   useEffect(() => {
     const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive(Number((e.target as HTMLElement).dataset.index));
-        });
-      },
+      (entries) => entries.forEach((e) => e.isIntersecting && setActive(Number((e.target as HTMLElement).dataset.index))),
       { rootMargin: '-45% 0px -45% 0px' }
     );
     items.current.forEach((el) => el && io.observe(el));
     return () => io.disconnect();
   }, []);
 
+  return (
+    <div className="process-layout">
+      <div className="process-stage">
+        <ScenePanel active={active} />
+      </div>
+      <ol className="process-steps">
+        {steps.map((s, i) => (
+          <li
+            key={s.title}
+            ref={(el) => {
+              items.current[i] = el;
+            }}
+            data-index={i}
+            data-active={i === active}
+            className="process-step"
+          >
+            <motion.div initial={false} animate={{ opacity: i === active ? 1 : 0.35 }} transition={{ duration: 0.5 }}>
+              <span className="process-step-kicker">Step {i + 1} of {steps.length}</span>
+              <h3 className="process-step-title">{s.title}</h3>
+              <p className="t-body mt-3">{s.desc}</p>
+            </motion.div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+};
+
+const Process: React.FC = () => {
+  const isDesktop = useIsDesktop();
   return (
     <section id="process" aria-labelledby="process-title" className="section">
       <div className="wrap">
@@ -240,80 +405,7 @@ const Process: React.FC = () => {
             the same. How long each one takes depends on the project.
           </RevealText>
         </div>
-
-        <div className="process-layout">
-          <div className="process-stage">
-            <div className="process-panel adire">
-              <AdirePattern className="absolute inset-0 opacity-[0.12]" tile={96} />
-              <div className="relative h-full p-[6%]">
-                <ProcessScene step={active} />
-              </div>
-              <div className="process-meter" aria-hidden="true">
-                {steps.map((s, i) => (
-                  <span key={s.title}>
-                    <motion.i initial={false} animate={{ scaleX: i <= active ? 1 : 0 }} transition={{ duration: 0.6, ease }} />
-                  </span>
-                ))}
-              </div>
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={active}
-                  className="process-caption"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.35 }}
-                  aria-hidden="true"
-                >
-                  {steps[active].title}
-                </motion.p>
-              </AnimatePresence>
-            </div>
-          </div>
-
-          <ol className="process-steps">
-            {steps.map((s, i) => (
-              <li
-                key={s.title}
-                ref={(el) => {
-                  items.current[i] = el;
-                }}
-                data-index={i}
-                data-active={i === active}
-                className="process-step"
-              >
-                {/* Text resolves into focus as its step becomes active, then softens as it passes */}
-                <motion.div
-                  initial={false}
-                  animate={
-                    i === active
-                      ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-                      : { opacity: 0.22, y: i < active ? -14 : 14, filter: 'blur(3px)' }
-                  }
-                  transition={{ duration: 0.7, ease }}
-                >
-                  <button
-                    type="button"
-                    className="process-step-btn"
-                    onClick={() => items.current[i] && scrollTo(items.current[i]!, { center: true })}
-                    aria-current={i === active ? 'step' : undefined}
-                  >
-                    <span className="process-step-kicker">Step {i + 1} of {steps.length}</span>
-                    <span className="process-step-title">{s.title}</span>
-                  </button>
-                  <motion.p
-                    className="t-body mt-3"
-                    initial={false}
-                    animate={i === active ? { opacity: 1, y: 0 } : { opacity: 0.6, y: 6 }}
-                    transition={{ duration: 0.6, delay: i === active ? 0.12 : 0, ease }}
-                  >
-                    {s.desc}
-                  </motion.p>
-                </motion.div>
-              </li>
-            ))}
-          </ol>
-        </div>
+        {isDesktop ? <PinnedProcess /> : <StackedProcess />}
       </div>
     </section>
   );

@@ -971,18 +971,6 @@ html.dark .work-hover {
   border-left-color: var(--indigo);
 }
 
-.process-step-btn {
-  display: grid;
-  gap: 6px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
 .process-step-kicker {
   font-size: 0.875rem;
   color: var(--ink-3);
@@ -1021,6 +1009,131 @@ html.dark .work-hover {
   .process-steps {
     padding-bottom: 18vh;
   }
+}
+
+/* Desktop: pinned sequence where the step text morphs alongside the scene */
+.process-pin {
+  position: relative;
+}
+
+.process-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 5fr 6fr;
+  gap: 72px;
+  align-items: center;
+  padding-block: 92px 40px;
+}
+
+.process-sticky .process-panel {
+  width: 100%;
+  max-width: calc(100vh - 150px);
+  justify-self: end;
+}
+
+.process-sticky-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: min(calc(100vh - 150px), 620px);
+}
+
+.process-rail {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.process-rail button {
+  position: relative;
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.process-rail button:hover {
+  color: var(--ink);
+}
+
+.process-rail button[data-active='true'] {
+  color: var(--paper);
+}
+
+.process-rail-dot {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 999px;
+  background: var(--ink);
+}
+
+.process-rail button {
+  isolation: isolate;
+}
+
+.process-kicker {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35em;
+  font-size: 0.9375rem;
+  color: var(--ink-3);
+}
+
+.process-kicker-num {
+  display: inline-flex;
+  justify-content: center;
+  min-width: 0.7em;
+  height: 1.35em;
+  overflow: hidden;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.process-now-title {
+  margin: 14px 0 0;
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+  perspective: 700px;
+}
+
+.morph-title,
+.morph-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.process-now-desc {
+  min-height: 5.4em;
+  margin-top: 20px;
+  max-width: 26em;
+}
+
+.process-track {
+  height: 2px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.process-track i {
+  display: block;
+  height: 100%;
+  background: var(--indigo);
+  transform-origin: left center;
 }
 
 /* ------------------------------------------------------------------
