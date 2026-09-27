@@ -305,6 +305,135 @@ html.dark .btn-primary:hover {
 }
 
 /* ------------------------------------------------------------------
+   Hero: a full-screen opening, copy on the left, the adire panel on the right
+------------------------------------------------------------------- */
+.hero {
+  padding-block: 32px 72px;
+}
+
+.hero-grid {
+  display: grid;
+  gap: 48px;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(2.6rem, 5.6vw, 4.6rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
+.word-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+  margin-right: 0.24em;
+}
+
+.hero-foot {
+  margin-top: 36px;
+}
+
+.hero-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  aspect-ratio: 4 / 5;
+}
+
+.hero-portrait {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 60%;
+  aspect-ratio: 3 / 4;
+  translate: -50% -50%;
+}
+
+.scroll-cue {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    padding-block: 24px 40px;
+  }
+  .hero-grid {
+    grid-template-columns: 7fr 4.2fr;
+    gap: 64px;
+    min-height: calc(100svh - 68px - 64px);
+    max-height: 940px;
+  }
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-block: 6vh 8px;
+  }
+  .hero-foot {
+    margin-top: 48px;
+  }
+  .hero-figure {
+    display: flex;
+    flex-direction: column;
+    min-height: 520px;
+    transform-origin: center top;
+  }
+  .hero-panel {
+    flex: 1;
+    aspect-ratio: auto;
+  }
+  .hero-portrait {
+    width: min(64%, 330px);
+  }
+  .scroll-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 56px;
+    font-size: 0.875rem;
+    color: var(--ink-3);
+    text-decoration: none;
+  }
+}
+
+.scroll-cue-line {
+  position: relative;
+  width: 1.5px;
+  height: 40px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.scroll-cue-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--indigo);
+  animation: scroll-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue-line::after {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------
    Adire panel — the one bold element
 ------------------------------------------------------------------- */
 .adire {
