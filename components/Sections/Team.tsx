@@ -8,7 +8,6 @@ type Member = {
   linkedin?: string;
 };
 
-// Roles left blank are simply not shown — fill them in when confirmed.
 const team: Member[] = [
   {
     name: 'Obinna Ihekona',
@@ -16,8 +15,8 @@ const team: Member[] = [
     photo: '/images/hero-image.jpg',
     linkedin: 'https://www.linkedin.com/in/obinna-ihekona-230742110/',
   },
-  { name: 'Adeoye Ibukun', role: '', photo: '/images/Adeoye Ibukun.jpeg' },
-  { name: 'Glory Ogbuta', role: '', photo: '/images/Glory-Ogbuta.jpeg' },
+  { name: 'Adeoye Ibukun', role: 'Frontend developer', photo: '/images/Adeoye Ibukun.jpeg' },
+  { name: 'Glory Ogbuta', role: 'Business analyst and developer', photo: '/images/Glory-Ogbuta.jpeg' },
 ];
 
 const Team: React.FC = () => (
