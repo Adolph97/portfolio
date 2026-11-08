@@ -23,7 +23,7 @@ export const RevealHeading: React.FC<{
         <motion.span
           className="block"
           variants={{ hidden: { y: '110%' }, shown: { y: 0 } }}
-          transition={{ duration: 1, ease }}
+          transition={{ duration: 0.8, ease }}
         >
           {children}
         </motion.span>
@@ -43,7 +43,7 @@ export const RevealText: React.FC<{ className?: string; delay?: number; children
     initial={{ opacity: 0, y: 14 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: '0px 0px -12% 0px' }}
-    transition={{ duration: 0.9, delay, ease }}
+    transition={{ duration: 0.7, delay, ease }}
   >
     {children}
   </motion.p>

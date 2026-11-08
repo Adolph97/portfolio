@@ -63,7 +63,7 @@ const Values: React.FC = () => {
         <div ref={figure} className="values-figure">
           {/* The mark draws itself when the section arrives; each dot fills as its value is read */}
           {figureInView ? (
-            <KonaMark size={340} detail animate dots={lit} className="values-mark" />
+            <KonaMark size={340} animate dots={lit} className="values-mark" />
           ) : (
             <div className="values-mark" aria-hidden="true" />
           )}

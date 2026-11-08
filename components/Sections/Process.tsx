@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion';
 import { RevealHeading, RevealText } from '../UI/Reveal';
-import AdirePattern from '../UI/AdirePattern';
+import DotGrid from '../UI/DotGrid';
+import { BRAND } from '../../lib/brand';
 import { scrollTo } from '../../lib/smoothScroll';
 
 const steps = [
@@ -13,10 +14,10 @@ const steps = [
 ];
 
 // ------------------------------------------------------------------
-// The scene: nine adire tiles that rearrange into a new formation per step.
+// The scene: nine tiles that rearrange into a new formation per step.
 // ------------------------------------------------------------------
-const THREAD = '#e2ecf8';
-const OCHRE = '#e8b33a';
+const THREAD = BRAND.thread;
+const OCHRE = BRAND.ochreOnDark;
 const ease = [0.16, 1, 0.3, 1] as const;
 
 type Tile = { x: number; y: number; w: number; h: number; rotate: number; fillOpacity: number; strokeOpacity: number; dash: string; accent?: boolean };
@@ -226,8 +227,8 @@ const useIsDesktop = () => {
 };
 
 const ScenePanel: React.FC<{ active: number }> = ({ active }) => (
-  <div className="process-panel adire">
-    <AdirePattern className="absolute inset-0 opacity-[0.12]" tile={96} />
+  <div className="process-panel stage">
+    <DotGrid className="absolute inset-0 opacity-[0.35]" pitch={24} radius={1.1} />
     <div className="relative h-full p-[6%]">
       <ProcessScene step={active} />
     </div>

@@ -1,205 +1,189 @@
-import React, { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
-import { animate, motion, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
-import AdirePattern from '../UI/AdirePattern';
-import type { PointerState } from '../UI/AdireCloth';
+import React, { useEffect, useRef, useState } from 'react';
+import { animate, motion, useInView as useMotionInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import DotGrid from '../UI/DotGrid';
+import { useInView } from '../UI/useInView';
+import HeroVisual from '../Hero/HeroVisual';
+import Typewriter from '../Hero/Typewriter';
+import { useShapeCycle } from '../Hero/useShapeCycle';
+import { EASE } from '../../lib/brand';
 
-// three.js is heavy; the static SVG pattern shows until the cloth is ready.
-const AdireCloth = lazy(() => import('../UI/AdireCloth'));
+const lines = ['We build the', 'software growing', 'businesses run on'];
 
-const ease = [0.16, 1, 0.3, 1] as const;
-
-const words = 'We build the software growing businesses run on.'.split(' ');
-
-const highlights = [
-  { value: 6, label: 'client companies' },
-  { value: 4, label: 'products live' },
+const stats = [
+  { value: 30, suffix: '+', label: 'clients served' },
   { value: 6, label: 'countries reached' },
+  { value: 4, label: 'products live', note: '+2 in the pipeline' },
+  { value: 4, label: 'partner companies' },
 ];
 
-/** Counts up from zero the first time it comes into view. */
-const CountUp: React.FC<{ to: number; delay?: number }> = ({ to, delay = 0 }) => {
+/** Counts up the first time it comes into view. */
+const CountUp: React.FC<{ to: number; delay: number; suffix?: string }> = ({ to, delay, suffix = '' }) => {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true });
-  const [n, setN] = useState(0);
+  const inView = useMotionInView(ref, { once: true });
+  const reduceMotion = useReducedMotion();
+  const [n, setN] = useState(reduceMotion ? to : 0);
   useEffect(() => {
-    if (!inView) return;
-    const controls = animate(0, to, { duration: 1.4, delay, ease: [0.16, 1, 0.3, 1], onUpdate: (v) => setN(Math.round(v)) });
+    if (!inView || reduceMotion) return;
+    const controls = animate(0, to, { duration: 1.2, delay, ease: EASE, onUpdate: (v) => setN(Math.round(v)) });
     return () => controls.stop();
-  }, [inView, to, delay]);
-  return <span ref={ref}>{n}</span>;
+  }, [inView, to, delay, reduceMotion]);
+  return (
+    <span ref={ref}>
+      {n}
+      {suffix}
+    </span>
+  );
+};
+
+/** True while the tab is visible, so the field and the words pause together. */
+const usePageVisible = () => {
+  const [visible, setVisible] = useState(() => document.visibilityState === 'visible');
+  useEffect(() => {
+    const on = () => setVisible(document.visibilityState === 'visible');
+    document.addEventListener('visibilitychange', on);
+    return () => document.removeEventListener('visibilitychange', on);
+  }, []);
+  return visible;
 };
 
 const Hero: React.FC = () => {
   const reduceMotion = useReducedMotion();
   const section = useRef<HTMLElement>(null);
-  const pointer = useRef<PointerState>({ x: 0, y: 0, active: 0 });
-  const [clothReady, setClothReady] = useState(false);
-  const handleReady = useCallback(() => setClothReady(true), []);
+  const pointer = useRef({ x: 0, y: 0 });
+  const scatter = useRef(0);
 
-  // Scrolling away pushes the scene back: copy drifts up, the panel recedes, the portrait parallaxes
+  const onScreen = useInView(section, '0px');
+  const pageVisible = usePageVisible();
+  const active = onScreen && pageVisible;
+  const scene = useShapeCycle(active, !reduceMotion);
+
+  // Scrolling away: the stage recedes, the copy lifts, the field disperses
   const { scrollYProgress } = useScroll({ target: section, offset: ['start start', 'end start'] });
-  const copyY = useTransform(scrollYProgress, [0, 1], [0, -80]);
-  const copyOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0.2]);
-  const panelScale = useTransform(scrollYProgress, [0, 1], [1, 0.92]);
-  const portraitY = useTransform(scrollYProgress, [0, 1], [0, 60]);
-
-  // Portrait tilts toward the pointer
-  const px = useMotionValue(0);
-  const py = useMotionValue(0);
-  const spring = { stiffness: 120, damping: 18, mass: 0.6 };
-  const rotateY = useSpring(useTransform(px, [-1, 1], [-8, 8]), spring);
-  const rotateX = useSpring(useTransform(py, [-1, 1], [6, -6]), spring);
-  const shiftX = useSpring(useTransform(px, [-1, 1], [-10, 10]), spring);
+  const stageScale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
+  const copyY = useTransform(scrollYProgress, [0, 1], [0, -70]);
+  useMotionValueEvent(scrollYProgress, 'change', (v) => {
+    scatter.current = Math.min(1, Math.max(0, (v - 0.1) / 0.6));
+  });
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse') return;
     const r = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - r.left) / r.width) * 2 - 1;
-    const y = -(((e.clientY - r.top) / r.height) * 2 - 1);
-    pointer.current = { x, y, active: 1 };
-    if (e.pointerType === 'mouse') {
-      px.set(x);
-      py.set(y);
-    }
+    pointer.current = { x: ((e.clientX - r.left) / r.width) * 2 - 1, y: ((e.clientY - r.top) / r.height) * 2 - 1 };
   };
 
-  const onPointerLeave = () => {
-    pointer.current = { ...pointer.current, active: 0 };
-    px.set(0);
-    py.set(0);
-  };
+  const rise = (delay: number) =>
+    reduceMotion ? {} : { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.7, delay, ease: EASE } };
 
   return (
     <section id="top" ref={section} className="hero">
-      <div className="wrap hero-grid">
-        <motion.div className="hero-copy" style={{ y: copyY, opacity: copyOpacity }}>
-          <h1 className="hero-title" aria-label={words.join(' ')}>
-            {words.map((word, i) => (
-              <span key={i} className="word-mask" aria-hidden="true">
-                <motion.span
-                  className="inline-block"
-                  initial={{ y: '115%', rotate: 4 }}
-                  animate={{ y: 0, rotate: 0 }}
-                  transition={{ duration: 1.1, delay: 0.45 + i * 0.06, ease }}
-                >
-                  {word}
-                </motion.span>
-              </span>
-            ))}
-          </h1>
+      <div className="wrap">
+        <motion.div
+          className="hero-stage stage"
+          style={{ scale: stageScale }}
+          onPointerMove={onPointerMove}
+          onPointerLeave={() => (pointer.current = { x: 0, y: 0 })}
+          initial={reduceMotion ? false : { clipPath: 'inset(6% 3% 6% 3% round 28px)', opacity: 0 }}
+          animate={{ clipPath: 'inset(0% 0% 0% 0% round 28px)', opacity: 1 }}
+          transition={{ duration: 0.8, ease: EASE }}
+        >
+          <motion.div
+            className="hero-grid-bg"
+            aria-hidden="true"
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.15 }}
+          >
+            <DotGrid pitch={32} radius={1.2} />
+          </motion.div>
+          <div className="hero-glow" aria-hidden="true" />
 
-          <div className="hero-foot">
-            <motion.p
-              className="t-lead"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 1.05, ease }}
-            >
-              Kona Tech is a studio in Lagos. We design and build web apps, automations and AI tools for teams
-              in Nigeria, the UK, the US and further afield.
+          <HeroVisual shape={scene.shape} active={active} pointer={pointer} scatter={scatter} />
+
+          <motion.div className="hero-main" style={{ y: copyY }}>
+            <h1 className="hero-title">
+              <span className="sr-only">
+                We build the software growing businesses run on: AI and automation, internal tools, web and mobile
+                products, and chatbots.
+              </span>
+              <span aria-hidden="true">
+                {lines.map((line, i) => (
+                  <span key={line} className="hero-line">
+                    <motion.span
+                      className="block"
+                      initial={reduceMotion ? false : { y: '110%' }}
+                      animate={{ y: 0 }}
+                      transition={{ duration: 0.9, delay: 0.2 + i * 0.09, ease: EASE }}
+                    >
+                      {i < lines.length - 1 ? (
+                        line
+                      ) : (
+                        <>
+                          {line.slice(0, line.lastIndexOf(' ') + 1)}
+                          {/* Keep the last word and the ochre full stop together */}
+                          <span className="whitespace-nowrap">
+                            {line.slice(line.lastIndexOf(' ') + 1)}
+                            <motion.span
+                              className="hero-dot"
+                              initial={reduceMotion ? false : { scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ type: 'spring', stiffness: 420, damping: 14, delay: 0.75 }}
+                            />
+                          </span>
+                        </>
+                      )}
+                    </motion.span>
+                  </span>
+                ))}
+              </span>
+            </h1>
+
+            <motion.p className="hero-type" aria-hidden="true" {...rise(0.55)}>
+              <svg className="hero-type-arrow" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 19L18 6M10 6h8v8" />
+              </svg>
+              <Typewriter text={scene.phrase} animate={!reduceMotion} />
             </motion.p>
 
-            <motion.div
-              className="mt-9 flex flex-wrap gap-3"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 1.15, ease }}
-            >
-              <a href="#work" className="btn btn-primary">See our work</a>
-              <a
-                href="https://calendly.com/obinna-ihekona/zoom"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-ghost"
-              >
+            <motion.div className="hero-ctas" {...rise(0.7)}>
+              <a href="#work" className="btn btn-on-indigo">See our work</a>
+              <a href="https://calendly.com/obinna-ihekona/zoom" target="_blank" rel="noopener noreferrer" className="btn btn-outline-light">
                 Book a discovery call
               </a>
             </motion.div>
-
-            <motion.dl
-              className="hero-highlights"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.35 }}
-            >
-              {highlights.map((h, i) => (
-                <div key={h.label}>
-                  <dt className="sr-only">{h.label}</dt>
-                  <dd className="m-0">
-                    <span className="hero-highlight-value">
-                      <CountUp to={h.value} delay={1.4 + i * 0.12} />
-                    </span>
-                    <span className="hero-highlight-label">{h.label}</span>
-                  </dd>
-                </div>
-              ))}
-            </motion.dl>
-          </div>
-        </motion.div>
-
-        <motion.figure className="hero-figure" style={{ scale: panelScale }}>
-          <motion.div
-            className="hero-panel adire [perspective:900px]"
-            initial={{ clipPath: 'inset(50% 0% 50% 0% round 28px)' }}
-            animate={{ clipPath: 'inset(0% 0% 0% 0% round 28px)' }}
-            transition={{ duration: 1.4, delay: 0.1, ease }}
-            onPointerMove={onPointerMove}
-            onPointerLeave={onPointerLeave}
-          >
-            <AdirePattern className="absolute inset-0" />
-            {!reduceMotion && (
-              <div
-                className="absolute inset-0 transition-opacity duration-1000"
-                style={{ opacity: clothReady ? 1 : 0 }}
-                aria-hidden="true"
-              >
-                <Suspense fallback={null}>
-                  <AdireCloth pointer={pointer} onReady={handleReady} />
-                </Suspense>
-              </div>
-            )}
-            <motion.div className="hero-portrait" style={{ y: portraitY }}>
-              <motion.img
-                src="/images/hero-image.jpg"
-                alt="Obinna Ihekona, founder of Kona Tech"
-                className="w-full h-full object-cover rounded-[18px] shadow-[0_30px_70px_-20px_rgba(4,14,30,0.85)] will-change-transform"
-                style={{ rotateX, rotateY, x: shiftX }}
-                initial={{ opacity: 0, scale: 1.18, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                transition={{ duration: 1.6, delay: 0.7, ease }}
-              />
-            </motion.div>
-
-            {/* Founder badge: links down to the 10xdev section */}
-            <motion.a
-              href="#community"
-              className="hero-badge"
-              initial={{ opacity: 0, y: 20, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.8, delay: 1.9, ease }}
-            >
-              <motion.span
-                className="flex items-center gap-3"
-                animate={reduceMotion ? undefined : { y: [0, -4, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2.8 }}
-              >
-                <img src="/Logos/10xdev-logo.png" alt="" className="hero-badge-logo" />
-                <span className="leading-tight">
-                  <span className="block text-[0.8125rem] text-[#687487]">Founder of</span>
-                  <span className="block font-bold text-[#111b29]">10xdev</span>
-                </span>
-              </motion.span>
-            </motion.a>
           </motion.div>
-          <motion.figcaption
-            className="mt-4 flex items-baseline justify-between gap-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-          >
-            <span className="font-bold">Obinna Ihekona</span>
-            <span className="t-small">Founder, lead systems architect</span>
-          </motion.figcaption>
-        </motion.figure>
+
+          <motion.figure className="hero-founder" {...rise(1)}>
+            <img src="/images/hero-image.jpg" alt="Obinna Ihekona, founder of Kona Tech" className="hero-founder-img" />
+            <figcaption>
+              <span className="hero-founder-name">Obinna Ihekona</span>
+              <span className="hero-founder-role">Founder, lead systems architect</span>
+              <a href="#community" className="hero-founder-chip">
+                <img src="/Logos/10xdev-logo.png" alt="" />
+                Founder of 10xdev
+              </a>
+            </figcaption>
+          </motion.figure>
+
+          <motion.dl className="hero-stats" {...rise(0.85)}>
+            {stats.map((s, i) => (
+              <div key={s.label} className="hero-stat">
+                <dt className="sr-only">
+                  {s.label}
+                  {s.note ? `, ${s.note}` : ''}
+                </dt>
+                <dd className="m-0">
+                  <span className="hero-stat-value">
+                    <CountUp to={s.value} suffix={s.suffix} delay={0.95 + i * 0.1} />
+                  </span>
+                  <span className="hero-stat-label" aria-hidden="true">
+                    {s.label}
+                    {s.note && <span className="hero-stat-note">{s.note}</span>}
+                  </span>
+                </dd>
+              </div>
+            ))}
+          </motion.dl>
+        </motion.div>
       </div>
     </section>
   );

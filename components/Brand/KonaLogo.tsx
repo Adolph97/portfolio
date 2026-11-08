@@ -1,20 +1,17 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { BRAND, EASE } from '../../lib/brand';
 
 /**
- * The Kona Tech mark: an adire-blue tile holding a K whose upper arm is a
+ * The Kona Tech mark: a navy tile holding a K whose upper arm is a
  * rising arrow, with three resist-dye dots climbing beside it (Integrity,
  * Innovation, Initiative). The last dot is ochre, the site's "live" accent.
  *
  * Geometry lives on a 48×48 grid; keep public/favicon.svg and public/brand/*
- * in step with these paths if they ever change.
+ * in step with these paths if they ever change. Colours come from lib/brand.ts.
  */
 
-export const BRAND = {
-  blue: '#1D4A8C',
-  paper: '#F1F2F5',
-  ochre: '#E0A526',
-} as const;
+export { BRAND };
 
 export const MARK_PATHS = {
   stem: 'M12 12V36',
@@ -29,16 +26,12 @@ export const MARK_DOTS = [
   { cx: 39, cy: 23, r: 2.4, value: 'Initiative' },
 ] as const;
 
-const EASE = [0.16, 1, 0.3, 1] as const;
-
 type DotState = readonly [boolean, boolean, boolean];
 
 export interface KonaMarkProps {
   size?: number;
   /** Draw the mark in once on mount. */
   animate?: boolean;
-  /** Dashed stitch border inside the tile; meant for sizes of 64px and up. */
-  detail?: boolean;
   /** 'tile' is the full-colour mark; 'glyph' drops the tile and uses currentColor. */
   variant?: 'tile' | 'glyph';
   /** Which dots are filled. Unfilled dots show as faint resist rings. */
@@ -51,7 +44,6 @@ export interface KonaMarkProps {
 export const KonaMark: React.FC<KonaMarkProps> = ({
   size = 28,
   animate = false,
-  detail = false,
   variant = 'tile',
   dots = [true, true, true],
   label,
@@ -68,7 +60,7 @@ export const KonaMark: React.FC<KonaMarkProps> = ({
       ? {
           initial: { pathLength: 0, opacity: 0 },
           animate: { pathLength: 1, opacity: 1 },
-          transition: { pathLength: { duration: 0.55, delay, ease: EASE }, opacity: { duration: 0.1, delay } },
+          transition: { pathLength: { duration: 0.4, delay, ease: EASE }, opacity: { duration: 0.1, delay } },
         }
       : {};
 
@@ -88,34 +80,19 @@ export const KonaMark: React.FC<KonaMarkProps> = ({
           width="48"
           height="48"
           rx="11"
-          fill={BRAND.blue}
+          fill={BRAND.navy}
           style={{ transformOrigin: '24px 24px' }}
           {...(play
-            ? { initial: { scale: 0.6, opacity: 0 }, animate: { scale: 1, opacity: 1 }, transition: { duration: 0.6, ease: EASE } }
+            ? { initial: { scale: 0.6, opacity: 0 }, animate: { scale: 1, opacity: 1 }, transition: { duration: 0.4, ease: EASE } }
             : {})}
-        />
-      )}
-      {!glyph && detail && (
-        <rect
-          x="3.6"
-          y="3.6"
-          width="40.8"
-          height="40.8"
-          rx="8"
-          fill="none"
-          stroke={BRAND.paper}
-          strokeOpacity={0.32}
-          strokeWidth={0.7}
-          strokeDasharray="1.6 1.9"
-          strokeLinecap="round"
         />
       )}
 
       <g fill="none" stroke={ink} strokeWidth={4.8} strokeLinecap="round" strokeLinejoin="round">
-        <motion.path d={MARK_PATHS.stem} strokeWidth={5.5} {...draw(0.25)} />
-        <motion.path d={MARK_PATHS.arrow} {...draw(0.45)} />
-        <motion.path d={MARK_PATHS.head} {...draw(0.75)} />
-        <motion.path d={MARK_PATHS.leg} {...draw(0.6)} />
+        <motion.path d={MARK_PATHS.stem} strokeWidth={5.5} {...draw(0.05)} />
+        <motion.path d={MARK_PATHS.arrow} {...draw(0.15)} />
+        <motion.path d={MARK_PATHS.head} {...draw(0.3)} />
+        <motion.path d={MARK_PATHS.leg} {...draw(0.2)} />
       </g>
 
       {MARK_DOTS.map((d, i) => {
@@ -137,7 +114,7 @@ export const KonaMark: React.FC<KonaMarkProps> = ({
             strokeWidth={0.8}
             strokeOpacity={on ? 1 : 0.55}
             transition={{
-              scale: { type: 'spring', stiffness: 380, damping: 16, delay: play ? 1 + i * 0.12 : 0 },
+              scale: { type: 'spring', stiffness: 380, damping: 16, delay: play ? 0.5 + i * 0.08 : 0 },
               default: { duration: 0.5, ease: EASE },
             }}
           />
@@ -167,11 +144,11 @@ export const KonaLogo: React.FC<KonaLogoProps> = ({ size = 30, layout = 'horizon
   const stacked = layout === 'stacked';
   return (
     <span className={`kona-logo kona-logo-${layout} ${className}`} style={{ gap: stacked ? size * 0.25 : size * 0.35 }}>
-      <KonaMark size={size} animate={animate} detail={size >= 64} />
+      <KonaMark size={size} animate={animate} />
       <motion.span
         initial={animate && !reduceMotion ? { opacity: 0, x: -6 } : false}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.7, delay: 0.5, ease: EASE }}
+        transition={{ duration: 0.5, delay: 0.2, ease: EASE }}
       >
         <KonaWordmark style={{ fontSize: stacked ? size * 0.42 : size * 0.62 }} />
       </motion.span>

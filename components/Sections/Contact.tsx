@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import AdirePattern from '../UI/AdirePattern';
+import DotGrid from '../UI/DotGrid';
+import { BRAND } from '../../lib/brand';
 import { KonaMark } from '../Brand/KonaLogo';
 import { RevealHeading } from '../UI/Reveal';
 
@@ -49,9 +50,9 @@ const Contact: React.FC = () => {
   return (
     <section id="contact" aria-labelledby="contact-title" className="section">
       <div className="wrap">
-        <div className="contact-band adire">
-          <div className="adire-strip" aria-hidden="true">
-            <AdirePattern tile={72} />
+        <div className="contact-band stage">
+          <div className="contact-grid" aria-hidden="true">
+            <DotGrid pitch={24} radius={1.2} />
           </div>
           <KonaMark variant="glyph" size={420} className="contact-watermark" />
           <div className="relative grid gap-12 lg:grid-cols-2 lg:gap-16 px-7 pb-9 pt-[112px] sm:px-10 sm:pb-12 lg:px-16 lg:pb-16 lg:pt-[128px]">
@@ -126,11 +127,11 @@ const Contact: React.FC = () => {
                   >
                     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" className="shrink-0">
                       <motion.circle
-                        cx="14" cy="14" r="12" stroke="#e8b33a" strokeWidth="2"
+                        cx="14" cy="14" r="12" stroke={BRAND.ochreOnDark} strokeWidth="2"
                         initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6 }}
                       />
                       <motion.path
-                        d="M8.5 14.5l3.5 3.5 7.5-8" stroke="#e8b33a" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
+                        d="M8.5 14.5l3.5 3.5 7.5-8" stroke={BRAND.ochreOnDark} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
                         initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.4, delay: 0.5 }}
                       />
                     </svg>

@@ -1,6 +1,7 @@
 /* ------------------------------------------------------------------
    Kona Tech — design tokens
-   Palette is drawn from adire, Yoruba indigo-resist cloth.
+   Navy and paper, with ochre as the single "live" accent.
+   JS-side copies of these colours live in lib/brand.ts.
 ------------------------------------------------------------------- */
 :root,
 html.light {
@@ -305,150 +306,335 @@ html.dark .btn-primary:hover {
 }
 
 /* ------------------------------------------------------------------
-   Hero: a full-screen opening, copy on the left, the adire panel on the right
+   Hero: a dark navy stage with the morphing point field. Copy on the left,
+   the field on the right, the founder card over its corner, stats along the foot.
 ------------------------------------------------------------------- */
 .hero {
-  padding-block: 32px 72px;
+  padding-block: 8px 56px;
 }
 
-.hero-grid {
+.hero-stage {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   display: grid;
-  gap: 48px;
+  gap: 32px;
+  padding: 44px 22px 24px;
+  border-radius: 28px;
+  transform-origin: center top;
+}
+
+html.dark .hero-stage {
+  box-shadow: inset 0 0 0 1px rgba(226, 236, 248, 0.08);
+}
+
+.hero-grid-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  color: rgba(226, 236, 248, 0.1);
+  -webkit-mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, #000 30%, transparent 92%);
+  mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, #000 30%, transparent 92%);
+}
+
+.hero-glow {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background:
+    radial-gradient(38% 50% at 72% 42%, rgba(56, 112, 196, 0.5), transparent 70%),
+    radial-gradient(50% 60% at 0% 100%, rgba(29, 74, 140, 0.45), transparent 70%);
+  pointer-events: none;
+}
+
+/* The field */
+.hero-visual {
+  position: relative;
+  height: 340px;
+  margin-inline: -22px;
+  pointer-events: none;
+}
+
+.hero-visual-fallback,
+.hero-visual-canvas {
+  position: absolute;
+  inset: 0;
+  transition: opacity 1.2s ease;
+}
+
+.hero-visual-fallback {
+  display: grid;
+  place-items: center;
+  color: rgba(241, 242, 245, 0.85);
+}
+
+.hero-visual-fallback svg {
+  width: min(62%, 300px);
+  height: auto;
+  filter: drop-shadow(0 0 40px rgba(91, 143, 219, 0.45));
+}
+
+.morph-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Copy */
+.hero-main {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
 }
 
 .hero-title {
   margin: 0;
-  font-size: clamp(2.6rem, 5.6vw, 4.6rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
+  color: #ffffff;
+  font-size: clamp(2.4rem, 4.7vw, 4.1rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
   font-weight: 800;
-  text-wrap: balance;
 }
 
-.word-mask {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: top;
-  padding-bottom: 0.1em;
-  margin-bottom: -0.1em;
-  margin-right: 0.24em;
-}
-
-.hero-foot {
-  margin-top: 36px;
-}
-
-.hero-panel {
-  position: relative;
-  overflow: hidden;
-  border-radius: 28px;
-  aspect-ratio: 4 / 5;
-}
-
-.hero-portrait {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 60%;
-  aspect-ratio: 3 / 4;
-  translate: -50% -50%;
-}
-
-.hero-highlights {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin: 40px 0 0;
-  padding-top: 20px;
-  border-top: 1px solid var(--line);
-  max-width: 520px;
-}
-
-.hero-highlight-value {
+.hero-line {
   display: block;
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+/* The full stop is the mark's ochre dot */
+.hero-dot {
+  display: inline-block;
+  width: 0.19em;
+  height: 0.19em;
+  margin-left: 0.06em;
+  border-radius: 50%;
+  background: var(--ochre);
+}
+
+.hero-type {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 28px;
+  min-height: calc(2 * 1.3em);
+  font-size: clamp(1.125rem, 1.9vw, 1.5rem);
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: rgba(234, 241, 250, 0.88);
+}
+
+.hero-type-arrow {
+  flex: none;
+  width: 1.05em;
+  height: 1.05em;
+  margin-top: 0.12em;
+  fill: none;
+  stroke: var(--ochre);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.type-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 3px;
+  vertical-align: -0.15em;
+  background: var(--ochre);
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .type-caret {
+    animation: none;
+  }
+}
+
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+/* Founder card */
+.hero-founder {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  padding: 12px 18px 12px 12px;
+  border-radius: 20px;
+  background: rgba(11, 26, 51, 0.55);
+  border: 1px solid rgba(226, 236, 248, 0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.hero-founder-img {
+  width: 76px;
+  height: 92px;
+  flex: none;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.hero-founder figcaption {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hero-founder-name {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.hero-founder-role {
+  font-size: 0.875rem;
+  color: rgba(234, 241, 250, 0.7);
+}
+
+.hero-founder-chip {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #111b29;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-founder-chip:hover {
+  transform: translateY(-2px);
+}
+
+.hero-founder-chip img {
+  width: 34px;
+  height: auto;
+  border-radius: 999px;
+}
+
+/* Stats */
+.hero-stats {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 16px;
+  margin: 0;
+  padding-top: 22px;
+  border-top: 1px solid rgba(226, 236, 248, 0.14);
+}
+
+.hero-stat-value {
+  display: block;
+  color: #ffffff;
+  font-size: clamp(1.875rem, 3.2vw, 2.75rem);
   line-height: 1;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
 }
 
-.hero-highlight-label {
+.hero-stat-label {
   display: block;
   margin-top: 6px;
   font-size: 0.875rem;
-  color: var(--ink-3);
+  color: rgba(234, 241, 250, 0.7);
 }
 
-.hero-badge {
-  position: absolute;
-  left: 16px;
-  bottom: 16px;
-  z-index: 3;
-  padding: 10px 16px 10px 10px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 18px 40px -18px rgba(4, 14, 30, 0.6);
-  text-decoration: none;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+.hero-stat-note {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ochre);
+  background: rgba(232, 179, 58, 0.12);
+  white-space: nowrap;
 }
 
-.hero-badge:hover {
-  transform: translateY(-3px);
-}
-
-.hero-badge-logo {
-  width: 56px;
-  height: auto;
-  border-radius: 8px;
+@media (min-width: 768px) {
+  .hero-stage {
+    padding: 56px 44px 32px;
+  }
+  .hero-visual {
+    height: 420px;
+    margin-inline: -44px;
+  }
+  .hero-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 @media (min-width: 1024px) {
   .hero {
-    padding-block: 24px 40px;
+    padding-block: 8px 40px;
   }
-  .hero-grid {
-    grid-template-columns: 7fr 4.2fr;
-    gap: 64px;
-    min-height: calc(100svh - 68px - 64px);
+  /* Copy left, field filling the right half, founder card over its lower corner */
+  .hero-stage {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    grid-template-rows: 1fr auto;
+    column-gap: 32px;
+    row-gap: 36px;
+    padding: 60px 60px 32px;
+    min-height: calc(100svh - 68px - 24px);
     max-height: 940px;
   }
-  .hero-copy {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-block: 6vh 8px;
+  .hero-visual {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 56%;
+    height: auto;
+    margin: 0;
+    z-index: 0;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 22%);
   }
-  .hero-foot {
-    margin-top: 48px;
+  .hero-main {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
   }
-  .hero-figure {
-    display: flex;
-    flex-direction: column;
-    min-height: 520px;
-    transform-origin: center top;
+  .hero-founder {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    justify-self: end;
   }
-  .hero-panel {
-    flex: 1;
-    aspect-ratio: auto;
-  }
-  .hero-portrait {
-    width: min(64%, 330px);
+  .hero-stats {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 }
 
 /* ------------------------------------------------------------------
-   Adire panel — the one bold element
+   Stage: the shared dark navy surface (hero, process panel, contact band)
 ------------------------------------------------------------------- */
-.adire {
-  background-color: var(--indigo-deep);
-  color: var(--pattern-stroke);
-}
-
-html.light .adire {
-  background-color: #183f78;
+.stage {
+  background-color: #0e2244;
+  color: rgba(226, 236, 248, 0.5);
 }
 
 /* ------------------------------------------------------------------
@@ -752,7 +938,7 @@ html.dark .work-hover {
   }
 }
 
-/* Adire motif per service */
+/* Brand glyph per service */
 .service-glyph {
   width: 48px;
   height: 48px;
@@ -767,7 +953,7 @@ html.dark .work-hover {
   transform-origin: center;
 }
 
-.service-glyph rect {
+.service-glyph .glyph-frame {
   transition: fill 0.4s ease, stroke-opacity 0.4s ease;
 }
 
@@ -836,7 +1022,7 @@ html.dark .work-hover {
   transform: translateY(-4px);
 }
 
-.service:is(:hover, :focus-visible) .service-glyph rect {
+.service:is(:hover, :focus-visible) .service-glyph .glyph-frame {
   fill: var(--indigo);
   stroke-opacity: 0;
 }
@@ -845,29 +1031,23 @@ html.dark .work-hover {
   box-shadow: inset 0 0 0 2px var(--indigo);
 }
 
-/* Each motif moves in its own way */
-.service[data-motif='rings']:is(:hover, :focus-visible) .service-glyph circle {
-  animation: glyph-pulse 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-}
-.service[data-motif='rings'] .service-glyph circle:nth-of-type(2) { animation-delay: 0.15s; }
-.service[data-motif='rings'] .service-glyph circle:nth-of-type(3) { animation-delay: 0.3s; }
-
-.service[data-motif='dots']:is(:hover, :focus-visible) .service-glyph circle {
+/* Each glyph moves in its own small way on hover */
+.service[data-motif='flow']:is(:hover, :focus-visible) .service-glyph circle,
+.service[data-motif='chat']:is(:hover, :focus-visible) .service-glyph .glyph-typing {
   animation: glyph-wave 1.2s ease-in-out infinite;
 }
+.service .service-glyph circle:nth-of-type(2) { animation-delay: 0.12s; }
+.service .service-glyph circle:nth-of-type(3) { animation-delay: 0.24s; }
 
-.service[data-motif='dots'] .service-glyph circle:nth-of-type(4n + 2) { animation-delay: 0.1s; }
-.service[data-motif='dots'] .service-glyph circle:nth-of-type(4n + 3) { animation-delay: 0.2s; }
-.service[data-motif='dots'] .service-glyph circle:nth-of-type(4n + 4) { animation-delay: 0.3s; }
-
-.service[data-motif='stripes']:is(:hover, :focus-visible) .service-glyph path {
-  animation: glyph-slide 1.4s ease-in-out infinite;
+.service[data-motif='tiles']:is(:hover, :focus-visible) .service-glyph .glyph-tile {
+  animation: glyph-pulse 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
+.service[data-motif='tiles'] .glyph-tile:nth-of-type(3) { animation-delay: 0.12s; }
+.service[data-motif='tiles'] .glyph-tile:nth-of-type(4) { animation-delay: 0.24s; }
+.service[data-motif='tiles'] .glyph-tile:nth-of-type(5) { animation-delay: 0.36s; }
 
-.service[data-motif='zigzag']:is(:hover, :focus-visible) .service-glyph path {
-  /* Framer normalises path length to 1 for the draw-in, so dashes are fractions of the path */
-  stroke-dasharray: 0.12 0.08;
-  animation: glyph-flow 0.9s linear infinite;
+.service[data-motif='rise']:is(:hover, :focus-visible) .glyph-arrow {
+  animation: glyph-rise 1.4s ease-in-out infinite;
 }
 
 @keyframes glyph-pulse {
@@ -880,13 +1060,9 @@ html.dark .work-hover {
   50% { transform: translateY(-3px); }
 }
 
-@keyframes glyph-slide {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(3px); }
-}
-
-@keyframes glyph-flow {
-  to { stroke-dashoffset: -0.4; }
+@keyframes glyph-rise {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(2px, -2px); }
 }
 
 /* Touch screens have no hover, so show the examples outright */
@@ -1580,16 +1756,23 @@ html.dark .portrait {
   color: var(--on-indigo);
 }
 
-/* Adire strip along the top of the contact band drifts slowly sideways */
-.adire-strip {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 72px;
-  overflow: hidden;
-  opacity: 0.7;
+/* The contact band is the brand navy, deepening toward the bottom */
+.contact-band.stage {
+  background: linear-gradient(165deg, #1d4a8c 0%, #0e2244 100%);
 }
 
-/* Faint mark pressed into the band, like a maker's stamp on cloth */
+/* Dot grid along the top of the contact band, fading downward */
+.contact-grid {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 220px;
+  color: rgba(226, 236, 248, 0.28);
+  -webkit-mask-image: linear-gradient(#000, transparent);
+  mask-image: linear-gradient(#000, transparent);
+  pointer-events: none;
+}
+
+/* Faint mark pressed into the band, like a watermark */
 .contact-watermark {
   position: absolute;
   left: -110px;
@@ -1603,23 +1786,6 @@ html.dark .portrait {
   .contact-watermark {
     width: 260px;
     height: 260px;
-  }
-}
-
-.adire-strip > svg {
-  width: calc(100% + 144px) !important;
-  animation: adire-drift 14s linear infinite;
-}
-
-@keyframes adire-drift {
-  to {
-    transform: translateX(-144px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .adire-strip > svg {
-    animation: none;
   }
 }
 
