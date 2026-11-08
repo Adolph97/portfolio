@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { MotionConfig } from 'framer-motion';
-import Navigation, { KonaMark } from './components/Navigation';
+import Navigation from './components/Navigation';
+import { KonaLogo } from './components/Brand/KonaLogo';
 import Hero from './components/Sections/Hero';
 import Clients from './components/Sections/Clients';
 import Portfolio from './components/Sections/Portfolio';
 import Community from './components/Sections/Community';
+import Values from './components/Sections/Values';
 import Services from './components/Sections/Services';
 import Process from './components/Sections/Process';
 import Team from './components/Sections/Team';
@@ -13,6 +15,15 @@ import Contact from './components/Sections/Contact';
 import ScrollToTop from './components/UI/ScrollToTop';
 import SocialLinks from './components/UI/SocialLinks';
 import { startSmoothScroll } from './lib/smoothScroll';
+
+const footerLinks = [
+  { label: 'About', href: '#values' },
+  { label: 'Work', href: '#work' },
+  { label: 'Services', href: '#services' },
+  { label: 'Team', href: '#team' },
+  { label: 'Process', href: '#process' },
+  { label: 'Contact', href: '#contact' },
+];
 
 const App: React.FC = () => {
   // index.html sets the initial class before paint; read it back so state matches.
@@ -55,6 +66,7 @@ const App: React.FC = () => {
         <Clients />
         <Portfolio />
         <Community />
+        <Values />
         <Services />
         <Process />
         <Team />
@@ -62,16 +74,52 @@ const App: React.FC = () => {
         <Contact />
       </main>
 
-      <footer className="border-t border-[var(--line)]">
-        <div className="wrap py-12 flex flex-col md:flex-row md:items-center justify-between gap-8">
-          <div className="flex items-center gap-3">
-            <KonaMark size={24} />
+      <footer className="site-footer">
+        <div className="wrap">
+          <div className="site-footer-grid">
             <div>
-              <div className="font-bold">Kona Tech Limited</div>
-              <div className="t-small">© {new Date().getFullYear()}, Lagos, Nigeria</div>
+              <KonaLogo size={56} layout="stacked" />
+              <p className="t-body mt-6 max-w-[30em]">
+                We make good technology easier to reach, so businesses and people across Nigeria and Africa can solve
+                real problems.
+              </p>
+              <p className="site-footer-values">
+                <span>Integrity</span>
+                <span>Innovation</span>
+                <span>Initiative</span>
+              </p>
             </div>
+
+            <nav aria-label="Footer" className="site-footer-links">
+              <ul>
+                {footerLinks.map((l) => (
+                  <li key={l.href}>
+                    <a href={l.href}>{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+              <ul>
+                <li>
+                  <a href="mailto:hello@konatechlimited.org">hello@konatechlimited.org</a>
+                </li>
+                <li>
+                  <a href="https://calendly.com/obinna-ihekona/zoom" target="_blank" rel="noopener noreferrer">
+                    Book a discovery call
+                  </a>
+                </li>
+                <li>
+                  <a href="https://10xdev.site" target="_blank" rel="noopener noreferrer">
+                    10xdev
+                  </a>
+                </li>
+              </ul>
+            </nav>
           </div>
-          <SocialLinks />
+
+          <div className="site-footer-base">
+            <span className="t-small">© {new Date().getFullYear()} Kona Tech Limited, Lagos, Nigeria</span>
+            <SocialLinks />
+          </div>
         </div>
       </footer>
     </MotionConfig>

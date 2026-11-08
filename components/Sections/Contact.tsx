@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import AdirePattern from '../UI/AdirePattern';
+import { KonaMark } from '../Brand/KonaLogo';
 import { RevealHeading } from '../UI/Reveal';
 
 const EMAIL = 'hello@konatechlimited.org';
@@ -52,6 +53,7 @@ const Contact: React.FC = () => {
           <div className="adire-strip" aria-hidden="true">
             <AdirePattern tile={72} />
           </div>
+          <KonaMark variant="glyph" size={420} className="contact-watermark" />
           <div className="relative grid gap-12 lg:grid-cols-2 lg:gap-16 px-7 pb-9 pt-[112px] sm:px-10 sm:pb-12 lg:px-16 lg:pb-16 lg:pt-[128px]">
             <div>
               <RevealHeading id="contact-title" className="t-h2 text-white">Tell us what you're building</RevealHeading>

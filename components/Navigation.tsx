@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { KonaLogo } from './Brand/KonaLogo';
 
 interface NavigationProps {
   toggleTheme: () => void;
@@ -6,6 +7,7 @@ interface NavigationProps {
 }
 
 const navItems = [
+  { label: 'About', href: '#values' },
   { label: 'Work', href: '#work' },
   { label: 'Services', href: '#services' },
   { label: 'Team', href: '#team' },
@@ -22,14 +24,6 @@ const SunIcon = () => (
 const MoonIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
-  </svg>
-);
-
-export const KonaMark: React.FC<{ size?: number }> = ({ size = 28 }) => (
-  <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden="true">
-    <rect width="28" height="28" rx="7" fill="var(--indigo)" />
-    <circle cx="14" cy="14" r="7.5" fill="none" stroke="var(--paper)" strokeWidth="1.6" />
-    <circle cx="14" cy="14" r="2.6" fill="var(--paper)" />
   </svg>
 );
 
@@ -59,9 +53,8 @@ const Navigation: React.FC<NavigationProps> = ({ toggleTheme, isDarkMode }) => {
   return (
     <header className="nav" data-scrolled={scrolled || isMenuOpen} data-hidden={hidden && !isMenuOpen} onFocusCapture={() => setHidden(false)}>
       <div className="wrap nav-inner">
-        <a href="#top" className="flex items-center gap-3 no-underline" onClick={() => setIsMenuOpen(false)}>
-          <KonaMark />
-          <span className="font-extrabold text-[1.125rem] tracking-[-0.01em]">Kona Tech</span>
+        <a href="#top" className="flex items-center no-underline" onClick={() => setIsMenuOpen(false)}>
+          <KonaLogo size={30} animate />
         </a>
 
         <nav aria-label="Main" className="hidden md:flex items-center gap-8">
