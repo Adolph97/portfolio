@@ -1,0 +1,14 @@
+{
+  "name": "Kona Tech",
+  "short_name": "Kona Tech",
+  "description": "Software, automation and AI from Lagos.",
+  "start_url": "/",
+  "display": "browser",
+  "theme_color": "#1D4A8C",
+  "background_color": "#F1F2F5",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
