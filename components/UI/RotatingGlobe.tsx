@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useInView } from './useInView';
+import { LAND_POINTS, decodeLandMask } from '../../lib/landMask';
 
 export type GlobeLocation = {
   name: string;
@@ -24,11 +25,15 @@ type Palette = { dot: string; glow: string; glowStrength: number; arc: string; m
 // ---------------------------------------------------------------- Dots
 const dotVertex = /* glsl */ `
   uniform float uSize;
+  uniform float uPixelRatio;
+  attribute float aLand;
   varying float vFacing;
+  varying float vLand;
   void main() {
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     vFacing = dot(normalize(normalMatrix * position), vec3(0.0, 0.0, 1.0));
-    gl_PointSize = uSize * (3.0 / -mv.z);
+    vLand = aLand;
+    gl_PointSize = uSize * uPixelRatio * (aLand > 0.5 ? 1.0 : 0.7) * (3.0 / -mv.z);
     gl_Position = projectionMatrix * mv;
   }
 `;
@@ -36,32 +41,48 @@ const dotVertex = /* glsl */ `
 const dotFragment = /* glsl */ `
   uniform vec3 uColor;
   varying float vFacing;
+  varying float vLand;
   void main() {
     vec2 c = gl_PointCoord - 0.5;
     if (dot(c, c) > 0.25) discard;
     float a = smoothstep(-0.35, 0.55, vFacing);
-    gl_FragColor = vec4(uColor, 0.12 + a * 0.78);
+    // Land carries the picture; the sea is a faint dotted shell that keeps the sphere's outline
+    float alpha = vLand > 0.5 ? 0.1 + a * 0.9 : 0.03 + a * 0.12;
+    gl_FragColor = vec4(uColor, alpha);
     #include <colorspace_fragment>
   }
 `;
 
 const DotSphere: React.FC<{ color: string; size: number }> = ({ color, size }) => {
   const geometry = useMemo(() => {
-    const count = 2600;
-    const positions = new Float32Array(count * 3);
+    // Same fibonacci sphere the land mask was baked against (lib/landMask.ts)
+    const land = decodeLandMask();
+    const count = LAND_POINTS;
+    const positions: number[] = [];
+    const flags: number[] = [];
     const golden = Math.PI * (3 - Math.sqrt(5));
     for (let i = 0; i < count; i++) {
+      const isLand = land[i] === 1;
+      if (!isLand && i % 5 !== 0) continue; // keep one sea dot in five
       const y = 1 - (i / (count - 1)) * 2;
       const r = Math.sqrt(1 - y * y);
       const t = golden * i;
-      positions.set([Math.cos(t) * r, y, Math.sin(t) * r], i * 3);
+      positions.push(Math.cos(t) * r, y, Math.sin(t) * r);
+      flags.push(isLand ? 1 : 0);
     }
     const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+    g.setAttribute('aLand', new THREE.BufferAttribute(new Float32Array(flags), 1));
     return g;
   }, []);
+  useEffect(() => () => geometry.dispose(), [geometry]);
 
-  const uniforms = useMemo(() => ({ uColor: { value: new THREE.Color(color) }, uSize: { value: size } }), []);
+  const gl = useThree((st) => st.gl);
+  const uniforms = useMemo(
+    () => ({ uColor: { value: new THREE.Color(color) }, uSize: { value: size }, uPixelRatio: { value: gl.getPixelRatio() } }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
   useEffect(() => {
     uniforms.uColor.value.set(color);
     uniforms.uSize.value = size;
@@ -222,23 +243,34 @@ const Globe: React.FC<{
   const home = useMemo(() => latLonToVector3(HOME.lat, HOME.lon, 1.005), []);
   const points = useMemo(() => locations.map((l) => latLonToVector3(l.lat, l.lon, 1.005)), [locations]);
 
-  // Start with Lagos facing the viewer
-  const startY = useMemo(() => -((HOME.lon + 90) * Math.PI) / 180, []);
+  // Spin that brings a longitude to face the viewer
+  const faceY = (lon: number) => -((lon + 90) * Math.PI) / 180;
+  const startY = useMemo(() => faceY(HOME.lon), []);
 
-  useFrame((_, delta) => {
-    if (spin.current) spin.current.rotation.y += delta * 0.12;
-    if (tilt.current && pointer.current) {
-      const tx = 0.28 + pointer.current.y * 0.25;
-      const ty = pointer.current.x * 0.35;
-      tilt.current.rotation.x += (tx - tilt.current.rotation.x) * 0.05;
-      tilt.current.rotation.z += (-ty * 0.3 - tilt.current.rotation.z) * 0.05;
+  useFrame((_, rawDelta) => {
+    const delta = Math.min(rawDelta, 1 / 30);
+    const target = locations[activeIndex] ?? HOME;
+    if (spin.current) {
+      // Ease round the shorter way to the active place, with a slow drift once there
+      const cur = spin.current.rotation.y;
+      let goal = faceY(target.lon);
+      goal += Math.round((cur - goal) / (Math.PI * 2)) * Math.PI * 2;
+      spin.current.rotation.y = THREE.MathUtils.damp(cur, goal, 1.6, delta);
+    }
+    if (tilt.current) {
+      const px = pointer.current?.x ?? 0;
+      const py = pointer.current?.y ?? 0;
+      // Tip the globe so the place sits near the middle; the pointer adds a few degrees
+      const tx = THREE.MathUtils.clamp((target.lat * Math.PI) / 180, -0.6, 0.75) * 0.75 + py * 0.12;
+      tilt.current.rotation.x = THREE.MathUtils.damp(tilt.current.rotation.x, tx, 1.6, delta);
+      tilt.current.rotation.z = THREE.MathUtils.damp(tilt.current.rotation.z, -px * 0.08, 2, delta);
     }
   });
 
   return (
     <group ref={tilt} rotation={[0.28, 0, 0]}>
       <group ref={spin} rotation={[0, startY, 0]}>
-        <DotSphere color={palette.dot} size={3.4} />
+        <DotSphere color={palette.dot} size={2.6} />
         {points.map((p, i) =>
           p.distanceTo(home) > 0.2 ? (
             <Arc key={locations[i].name} from={home} to={p} color={palette.arc} offset={i * 0.37} />
@@ -258,7 +290,9 @@ const RotatingGlobe: React.FC<{
   isDarkMode: boolean;
   locations: GlobeLocation[];
   onActiveLocationChange?: (name: string) => void;
-}> = ({ isDarkMode, locations, onActiveLocationChange }) => {
+  /** Milliseconds spent on each place. */
+  interval?: number;
+}> = ({ isDarkMode, locations, onActiveLocationChange, interval = 3200 }) => {
   const wrap = useRef<HTMLDivElement>(null);
   const inView = useInView(wrap);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -266,9 +300,9 @@ const RotatingGlobe: React.FC<{
 
   useEffect(() => {
     if (!locations.length || !inView) return;
-    const timer = setInterval(() => setActiveIndex((i) => (i + 1) % locations.length), 1600);
+    const timer = setInterval(() => setActiveIndex((i) => (i + 1) % locations.length), interval);
     return () => clearInterval(timer);
-  }, [locations.length, inView]);
+  }, [locations.length, inView, interval]);
 
   useEffect(() => {
     if (locations[activeIndex]) onActiveLocationChange?.(locations[activeIndex].name);
